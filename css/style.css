@@ -1,7 +1,7 @@
 /* Color Scheme */
 :root {
-    --primary-color: #e91e63;
-    --secondary-color: #9c27b0;
+    --primary-color: #ff6f91;
+    --secondary-color: #8e44ad;
     --dark-color: #212121;
     --light-color: #f5f5f5;
     --text-color: #333;
@@ -39,6 +39,22 @@ body {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+/* Rounded gradient primary buttons */
+.btn-primary {
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    border: none;
+    color: #fff;
+    padding: 10px 26px;
+    border-radius: 30px;
+    box-shadow: 0 8px 20px rgba(142,68,173,0.12);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(142,68,173,0.18);
 }
 
 /* Top Bar */
@@ -340,16 +356,8 @@ body {
     transform: scale(1.1);
 }
 
-.product-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: var(--primary-color);
-    color: white;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: bold;
+.product-badge { /* kept for backward compatibility but hidden */
+    display: none;
 }
 
 .product-info {
@@ -400,7 +408,7 @@ body {
 }
 
 .btn-add-cart {
-    background-color: var(--primary-color);
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
     color: white;
     border: none;
     padding: 10px 20px;
@@ -920,6 +928,42 @@ body {
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     max-width: 800px;
     margin: 0 auto;
+}
+
+/* Larger, clearer CTA for Google Form approach */
+#custom-order-cta .card-body h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--dark-color);
+}
+
+#custom-order-cta .card-body .lead {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #444;
+}
+
+#custom-order-cta .card-body p.small {
+    font-size: 0.95rem;
+}
+
+#custom-order-cta .btn-primary {
+    padding: 14px 34px;
+    font-size: 1.05rem;
+}
+
+@media (max-width: 576px) {
+    #custom-order-cta .card-body h3 {
+        font-size: 1.5rem;
+    }
+    #custom-order-cta .card-body .lead {
+        font-size: 1rem;
+    }
+    #custom-order-cta .btn-primary {
+        width: 100%;
+        padding: 12px 20px;
+    }
 }
 
 /* Notification Toast */

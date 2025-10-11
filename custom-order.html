@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Custom Orders - Crochet Creations</title>
+    <title>Custom Orders - STITCH PLEASE!</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
@@ -28,7 +28,7 @@
         <div class="container">
             <a class="navbar-brand" href="index.html">
                 <i class="fas fa-yarn brand-icon"></i>
-                <span class="brand-name">CROCHET CREATIONS</span>
+                <span class="brand-name">STITCH PLEASE!</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -82,72 +82,38 @@
                     <p class="text-muted">Have a special design in mind? We'd love to bring your vision to life!</p>
                 </div>
 
-                <form id="custom-order-form">
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <label class="form-label">Your Name *</label>
-                            <input type="text" name="name" class="form-control" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Email Address *</label>
-                            <input type="email" name="email" class="form-control" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Phone Number *</label>
-                            <input type="tel" name="phone" class="form-control" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Product Type *</label>
-                            <select name="product-type" class="form-select" required>
-                                <option value="">Select product type...</option>
-                                <option value="hat">Hat</option>
-                                <option value="bag">Bag</option>
-                                <option value="clothing">Clothing</option>
-                                <option value="accessory">Accessory</option>
-                                <option value="home-decor">Home Decor</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label">Describe Your Custom Order *</label>
-                            <textarea name="description" class="form-control" rows="5" 
-                                      placeholder="Please describe what you want in detail (size, style, purpose, etc.)" 
-                                      required></textarea>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Preferred Colors</label>
-                            <input type="text" name="colors" class="form-control" 
-                                   placeholder="e.g., Pink, White, Baby Blue">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Your Budget Range</label>
-                            <select name="budget" class="form-select">
-                                <option value="">Select budget range...</option>
-                                <option value="under-500">Under ₱500</option>
-                                <option value="500-1000">₱500 - ₱1,000</option>
-                                <option value="1000-2000">₱1,000 - ₱2,000</option>
-                                <option value="above-2000">Above ₱2,000</option>
-                                <option value="flexible">Flexible</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">When Do You Need It?</label>
-                            <input type="date" name="deadline" class="form-control">
-                        </div>
-                        <div class="col-12">
-                            <div class="alert alert-info">
-                                <i class="fas fa-info-circle"></i>
-                                <strong>Note:</strong> Custom orders typically take 1-2 weeks to complete, depending on complexity. 
-                                We'll contact you within 24 hours with a quote and estimated timeline.
+                <!-- Replaced the inline form with a Google Forms CTA. -->
+                <div id="custom-order-cta">
+                    <div class="text-center mb-4">
+                        <h3>Request a Custom Crochet Item</h3>
+                        <p class="text-muted">We now handle custom order details via Google Forms for a smoother experience — this helps us collect images and organize requests in Google Sheets.</p>
+                    </div>
+
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="card shadow-sm">
+                                <div class="card-body text-center p-4">
+                                    <p class="lead">Please click the button below to open our Custom Order Form. The form will ask for your name, contact details, delivery address, a short description of the item, and an option to attach reference images.</p>
+
+                                    <!-- Open the Google Form for custom orders (supports file upload when signed in) -->
+                                    <a id="open-google-form" href="https://docs.google.com/forms/d/e/1FAIpQLSf9sRYHSVR_R6Uy2qr02HEO3Mz2riSFciSK4WUqnJmAw7hSkw/viewform?usp=header" target="_blank" class="btn btn-primary btn-lg mb-3">
+                                        <i class="fas fa-external-link-alt"></i> Open Custom Order Form
+                                    </a>
+
+                                    <div>
+                                        <a id="mailto-owner" href="mailto:owner@example.com?subject=Custom%20Order%20Inquiry" class="btn btn-outline-secondary">
+                                            <i class="fas fa-envelope"></i> Contact via Email
+                                        </a>
+                                    </div>
+
+                                    <hr class="my-4">
+                                    <p class="small text-muted">If you'd like to attach reference photos but don't have a Google account, you can send them to our email after submitting the form.</p>
+                                    <p class="small text-muted mt-2">Custom orders usually take 1–2 weeks depending on complexity. We'll contact you within 24 hours with a quote and timeline.</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-primary btn-lg w-100">
-                                <i class="fas fa-paper-plane"></i> Submit Custom Order Request
-                            </button>
-                        </div>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     </section>
@@ -208,7 +174,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 Crochet Creations. All rights reserved.</p>
+                <p>&copy; 2024 STITCH PLEASE!. All rights reserved.</p>
             </div>
         </div>
     </footer>

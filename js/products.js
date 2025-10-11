@@ -198,10 +198,10 @@ function displayProducts(productsToDisplay, containerId) {
             <div class="product-card">
                 <div class="product-image-container">
                     <img src="${product.image}" alt="${product.name}" class="product-image">
-                    ${product.new ? '<span class="product-badge">NEW</span>' : ''}
+                    <!-- Removed NEW badge as requested -->
                 </div>
                 <div class="product-info">
-                    <div class="product-category">${product.category}</div>
+                    <div class="product-category">${product.category.charAt(0).toUpperCase() + product.category.slice(1)}</div>
                     <h3 class="product-name">${product.name}</h3>
                     <p class="product-description">${product.description}</p>
                     <div class="product-footer">

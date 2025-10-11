@@ -33,6 +33,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// === Configuration ===
+// Set OWNER_EMAIL to the seller's address for mailto fallback
+const OWNER_EMAIL = 'owner@example.com';
+
+// If you want to forward custom orders to a Google Form, set the formAction
+// to your Google Form 'formResponse' endpoint (example:
+// https://docs.google.com/forms/d/e/FORM_ID/formResponse)
+// and map your form field names (name/email/phone/description/etc.) to the
+// Google Form entry IDs (entry.XXXXXXXX). Example:
+// const GOOGLE_FORM_ACTION = 'https://docs.google.com/forms/d/e/FORM_ID/formResponse';
+// const GOOGLE_FORM_FIELDS = { name: 'entry.123456', email: 'entry.234567', description: 'entry.345678' };
+const GOOGLE_FORM_ACTION = '';
+const GOOGLE_FORM_FIELDS = {};
+
+// (owner email already configured above as OWNER_EMAIL)
+
 // Load featured products on homepage
 function loadFeaturedProducts() {
     const featured = getFeaturedProducts().slice(0, 4); // Show only 4
@@ -41,8 +57,9 @@ function loadFeaturedProducts() {
 
 // Load new arrivals on homepage
 function loadNewArrivals() {
-    const newProducts = getNewArrivals().slice(0, 4); // Show only 4
-    displayProducts(newProducts, 'new-arrivals');
+    // Show a broader selection instead of relying on the `new` flag
+    const all = getAllProducts().slice(0, 6); // show up to 6 items
+    displayProducts(all, 'new-arrivals');
 }
 
 // Load all products with category filter
@@ -134,7 +151,7 @@ function showPaymentInstructions(method) {
                     <p>Please send payment to:</p>
                     <div class="payment-details">
                         <p><strong>GCash Number:</strong> 0917-123-4567</p>
-                        <p><strong>Account Name:</strong> Crochet Creations</p>
+                        <p><strong>Account Name:</strong> STITCH PLEASE!</p>
                     </div>
                     <p class="text-muted small">After placing your order, please send a screenshot of your payment as proof.</p>
                 </div>
@@ -148,7 +165,7 @@ function showPaymentInstructions(method) {
                     <div class="payment-details">
                         <p><strong>Bank:</strong> BPI</p>
                         <p><strong>Account Number:</strong> 1234-5678-9012</p>
-                        <p><strong>Account Name:</strong> Crochet Creations</p>
+                        <p><strong>Account Name:</strong> STITCH PLEASE!</p>
                     </div>
                     <p class="text-muted small">Send deposit slip or screenshot as proof of payment.</p>
                 </div>
@@ -263,7 +280,49 @@ function setupCustomOrderForm() {
         
         console.log('Custom order submitted:', customOrderData);
         
-        // Show success message
+        // If a GOOGLE_FORM_ACTION is configured, post to the Google Form
+        if (GOOGLE_FORM_ACTION && Object.keys(GOOGLE_FORM_FIELDS).length > 0) {
+            try {
+                // Create a temporary form and submit (avoids CORS problems with fetch)
+                const tmpForm = document.createElement('form');
+                tmpForm.method = 'POST';
+                tmpForm.action = GOOGLE_FORM_ACTION;
+                // open in new tab so user stays on site
+                tmpForm.target = '_blank';
+
+                // Map fields from our form to Google Form entry IDs
+                Object.keys(GOOGLE_FORM_FIELDS).forEach(key => {
+                    const entryName = GOOGLE_FORM_FIELDS[key]; // e.g. 'entry.123456'
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = entryName;
+                    input.value = (customOrderData[key] || '').toString();
+                    tmpForm.appendChild(input);
+                });
+
+                // Append and submit
+                document.body.appendChild(tmpForm);
+                tmpForm.submit();
+                // remove it afterwards
+                setTimeout(() => tmpForm.remove(), 1000);
+            } catch (err) {
+                console.warn('Google Form submission failed:', err);
+            }
+        } else {
+            // Attempt mailto fallback so owner receives an email draft with the details
+            try {
+                const subject = encodeURIComponent(`Custom Order Request from ${customOrderData.name}`);
+                const body = encodeURIComponent(
+                    `Name: ${customOrderData.name}\nEmail: ${customOrderData.email}\nPhone: ${customOrderData.phone}\nProduct Type: ${customOrderData.productType}\nBudget: ${customOrderData.budget}\nDeadline: ${customOrderData.deadline}\n\nDescription:\n${customOrderData.description}`
+                );
+                // Open user's default mail client with prefilled message to owner
+                window.location.href = `mailto:${OWNER_EMAIL}?subject=${subject}&body=${body}`;
+            } catch (err) {
+                console.warn('Could not open mail client:', err);
+            }
+        }
+
+        // Show success message regardless so the user sees feedback
         showCustomOrderConfirmation(customOrderData);
     });
 }
