@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crochet Creations - Handmade Crochet Products</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="top-bar-left">
+                    <i class="fas fa-truck"></i> Free Shipping on Orders over ₱1000
+                </div>
+                <div class="top-bar-right">
+                    <a href="custom-order.html"><i class="fas fa-paint-brush"></i> Custom Orders</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-yarn brand-icon"></i>
+                <span class="brand-name">CROCHET CREATIONS</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">HOME</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="products.html">ALL PRODUCTS</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="products.html?category=hats">HATS</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="products.html?category=bags">BAGS</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="products.html?category=clothing">CLOTHING</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="products.html?category=accessories">ACCESSORIES</a>
+                    </li>
+                </ul>
+                <div class="navbar-actions">
+                    <a href="cart.html" class="cart-button">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge" id="cart-count">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Banner -->
+    <section class="hero-banner">
+        <div class="hero-overlay">
+            <div class="container">
+                <div class="hero-content">
+                    <span class="hero-subtitle">NEW COLLECTION</span>
+                    <h1 class="hero-title">Handmade Crochet<br>With Love & Care</h1>
+                    <p class="hero-description">Discover unique, handcrafted crochet items perfect for any occasion</p>
+                    <div class="hero-buttons">
+                        <a href="products.html" class="btn btn-primary btn-lg">Shop Now</a>
+                        <a href="custom-order.html" class="btn btn-outline-light btn-lg">Custom Order</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category Cards -->
+    <section class="category-section">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-3 col-6">
+                    <a href="products.html?category=hats" class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-hat-cowboy"></i>
+                        </div>
+                        <h3>Hats</h3>
+                        <p>Stylish & Comfy</p>
+                    </a>
+                </div>
+                <div class="col-md-3 col-6">
+                    <a href="products.html?category=bags" class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <h3>Bags</h3>
+                        <p>Durable & Trendy</p>
+                    </a>
+                </div>
+                <div class="col-md-3 col-6">
+                    <a href="products.html?category=clothing" class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-tshirt"></i>
+                        </div>
+                        <h3>Clothing</h3>
+                        <p>Fashionable Wear</p>
+                    </a>
+                </div>
+                <div class="col-md-3 col-6">
+                    <a href="products.html?category=accessories" class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-gem"></i>
+                        </div>
+                        <h3>Accessories</h3>
+                        <p>Perfect Details</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="products-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Featured Products</h2>
+                <a href="products.html" class="view-all-link">View All <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="row g-4" id="featured-products">
+                <!-- Products loaded by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- New Arrivals -->
+    <section class="products-section bg-light">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">New Arrivals</h2>
+                <a href="products.html" class="view-all-link">View All <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="row g-4" id="new-arrivals">
+                <!-- Products loaded by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-3 col-6">
+                    <div class="feature-box">
+                        <i class="fas fa-hand-holding-heart"></i>
+                        <h4>Handmade</h4>
+                        <p>Crafted with love & care</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="feature-box">
+                        <i class="fas fa-shield-alt"></i>
+                        <h4>Quality</h4>
+                        <p>Premium materials only</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="feature-box">
+                        <i class="fas fa-truck"></i>
+                        <h4>Fast Delivery</h4>
+                        <p>Quick & reliable shipping</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="feature-box">
+                        <i class="fas fa-palette"></i>
+                        <h4>Custom Made</h4>
+                        <p>Your design, our craft</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>About Us</h5>
+                    <p>We create beautiful, handmade crochet items with love and attention to detail. Each piece is unique and made to order.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul class="footer-links">
+                        <li><a href="products.html">All Products</a></li>
+                        <li><a href="custom-order.html">Custom Orders</a></li>
+                        <li><a href="cart.html">Shopping Cart</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Follow Us</h5>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Crochet Creations. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/main.js"></script>
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/68ea0e488c23bb194e60d798/1j794fiuq';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    <!--End of Tawk.to Script-->
+</body>
+</html>
