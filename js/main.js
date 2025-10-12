@@ -263,11 +263,12 @@ function processOrder() {
 
     // Submit to Google Apps Script endpoint via a temporary HTML form to avoid CORS issues
     try {
-        const tmpForm = document.createElement('form');
-        tmpForm.method = 'POST';
-        tmpForm.action = APPS_SCRIPT_URL;
-        // open in new tab so user stays on the site while the request is sent
-        tmpForm.target = '_blank';
+    const tmpForm = document.createElement('form');
+    tmpForm.method = 'POST';
+    // Submit to the Main Web App URL
+    tmpForm.action = MAIN_WEB_APP_URL;
+    // open in new tab so user stays on the site while the request is sent
+    tmpForm.target = '_blank';
 
         // Helper to append hidden inputs
         const appendInput = (name, value) => {
@@ -293,6 +294,12 @@ function processOrder() {
         appendInput('createdAt', orderData.createdAt);
         // Serialize items as JSON string
         appendInput('items', JSON.stringify(orderData.items || []));
+    // Ensure the script writes to your existing sheet tab name (adjust if different)
+    appendInput('sheetName', 'ORDERS (MAIN)');
+    // Always send spreadsheetId so Apps Script can open the correct spreadsheet
+    appendInput('spreadsheetId', SPREADSHEET_ID);
+    // Optionally include a shared secret if configured
+    if (SHARED_SECRET) appendInput('key', SHARED_SECRET);
 
         document.body.appendChild(tmpForm);
         tmpForm.submit();
