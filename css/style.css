@@ -687,8 +687,14 @@ body {
 }
 
 .empty-cart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     padding: 80px 20px;
+    max-width: 720px;
+    margin: 0 auto;
 }
 
 .empty-cart i {
@@ -705,6 +711,11 @@ body {
 .empty-cart p {
     color: #666;
     margin-bottom: 30px;
+}
+
+/* Ensure the empty-cart occupies full height visually on narrow pages */
+.col-12 > .empty-cart {
+    min-height: 260px;
 }
 
 /* Cart Summary */

@@ -47,6 +47,25 @@ const OWNER_EMAIL = 'owner@example.com';
 const GOOGLE_FORM_ACTION = '';
 const GOOGLE_FORM_FIELDS = {};
 
+// Google Apps Script Web App endpoints (deployed by the owner)
+// Replace these with your deployed URLs (provided earlier)
+const MAIN_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyX20Y08nR2mDFNqsKUlbalcyEjFhriobz-FiC8FfWPcFvzrc2mefotnSDqN4zt5TQf/exec';
+const CUSTOM_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby9odO7EKSmICSqQBnPyLqc-KuPj6G1H7A66vdHnmZNL6Yu7udHICZzNm4pHHv954zT/exec';
+
+// Spreadsheet ID (will be sent automatically with requests). You can also set this in your Apps Script properties.
+const SPREADSHEET_ID = '1g5l54fIHRQyBp2h0gO_B91j68uw7tVmPMEka2ditjfQ';
+
+// Optional lightweight secret token for minimal protection. If you set a token in your Apps Script
+// script properties (e.g. KEY_SECRET), set the same value here so requests include it.
+// Leave empty to disable.
+const SHARED_SECRET = '';
+
+// Google Form prefill base for payment proof uploads.
+// Replace FORM_ID and ENTRY_ID with your form's values (prefill URL pattern):
+// e.g. 'https://docs.google.com/forms/d/e/FORM_ID/viewform?usp=pp_url&entry.ENTRY_ID='
+// Prefill base using the form ID you provided and the Order ID entry id
+const GOOGLE_FORM_PROOF_PREFILL = 'https://docs.google.com/forms/d/e/1FAIpQLSczpuvin8w07EFcXr9slA2OVOYVARJHNXxuH8WvHIePi9XdgA/viewform?usp=pp_url&entry.375383761=';
+
 // (owner email already configured above as OWNER_EMAIL)
 
 // Load featured products on homepage
@@ -186,34 +205,109 @@ function showPaymentInstructions(method) {
 }
 
 // Process order
+function generateOrderId() {
+    const t = new Date();
+    const dt = t.toISOString().replace(/[:.]/g, '').replace('T', '-').split('Z')[0];
+    const rnd = Math.random().toString(36).slice(2,6).toUpperCase();
+    return `ORDER-${dt}-${rnd}`;
+}
+
 function processOrder() {
     const form = document.getElementById('checkout-form');
     const formData = new FormData(form);
-    
-    const orderData = {
-        customerName: formData.get('name'),
+
+    const customer = {
+        name: formData.get('name'),
         email: formData.get('email'),
         phone: formData.get('phone'),
         address: formData.get('address'),
-        city: formData.get('city'),
-        paymentMethod: formData.get('payment-method'),
-        deliveryOption: formData.get('delivery-option') || 'standard',
-        notes: formData.get('notes') || '',
-        items: getCart(),
+        city: formData.get('city')
+    };
+
+    // Build items array with minimal, stable fields
+    const items = getCart().map(i => ({
+        productId: i.id,
+        name: i.name,
+        qty: i.quantity,
+        price: i.price,
+        options: { color: i.selectedColor, size: i.selectedSize }
+    }));
+
+    const orderId = generateOrderId();
+
+    // Keep backward-compatible top-level fields while including a customer object
+    const orderData = {
+        orderId,
+        customerName: customer.name,
+        email: customer.email,
+        phone: customer.phone,
+        address: customer.address,
+        city: customer.city,
+        customer, // nested object for Apps Script usage
+        items,
         subtotal: getCartSubtotal(),
         deliveryFee: getDeliveryFee(),
         total: getCartTotal(),
-        orderDate: new Date().toLocaleString()
+        paymentMethod: formData.get('payment-method'),
+        deliveryOption: formData.get('delivery-option') || 'standard',
+        notes: formData.get('notes') || '',
+        createdAt: new Date().toISOString()
     };
-    
-    // In a real application, this would send to a server
-    console.log('Order placed:', orderData);
-    
-    // Show success message
-    showOrderConfirmation(orderData);
-    
-    // Clear cart
-    clearCart();
+
+    // Disable submit button to prevent duplicate orders
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Placing order...';
+    }
+
+    // Submit to Google Apps Script endpoint via a temporary HTML form to avoid CORS issues
+    try {
+        const tmpForm = document.createElement('form');
+        tmpForm.method = 'POST';
+        tmpForm.action = APPS_SCRIPT_URL;
+        // open in new tab so user stays on the site while the request is sent
+        tmpForm.target = '_blank';
+
+        // Helper to append hidden inputs
+        const appendInput = (name, value) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value == null ? '' : value.toString();
+            tmpForm.appendChild(input);
+        };
+
+        appendInput('orderId', orderData.orderId);
+        appendInput('customerName', orderData.customerName);
+        appendInput('email', orderData.email);
+        appendInput('phone', orderData.phone);
+        appendInput('address', orderData.address);
+        appendInput('city', orderData.city);
+        appendInput('subtotal', orderData.subtotal);
+        appendInput('deliveryFee', orderData.deliveryFee);
+        appendInput('total', orderData.total);
+        appendInput('paymentMethod', orderData.paymentMethod);
+        appendInput('deliveryOption', orderData.deliveryOption);
+        appendInput('notes', orderData.notes);
+        appendInput('createdAt', orderData.createdAt);
+        // Serialize items as JSON string
+        appendInput('items', JSON.stringify(orderData.items || []));
+
+        document.body.appendChild(tmpForm);
+        tmpForm.submit();
+        setTimeout(() => tmpForm.remove(), 1500);
+    } catch (err) {
+        console.error('Form submit fallback failed:', err);
+    } finally {
+        // Show confirmation locally regardless of network success
+        showOrderConfirmation(orderData);
+        clearCart();
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Place Order';
+        }
+    }
 }
 
 // Show order confirmation
@@ -247,6 +341,15 @@ function showOrderConfirmation(orderData) {
                 </ul>
             </div>
             
+            <div class="payment-proof mt-3">
+                <h5>Upload Payment Proof</h5>
+                <p>Please upload a screenshot of your payment and include the payment reference number so we can verify your order quickly.</p>
+                <p>
+                    <a id="upload-proof-link" href="${GOOGLE_FORM_PROOF_PREFILL}${encodeURIComponent(orderData.orderId)}" target="_blank" class="btn btn-primary btn-lg">Upload Payment Proof</a>
+                </p>
+                <p class="small text-muted">Note: Google may require you to sign in to upload files. If you prefer, you can also send the screenshot via WhatsApp or email and include your Order ID: <strong>${orderData.orderId}</strong>.</p>
+            </div>
+
             <div class="confirmation-actions">
                 <a href="products.html" class="btn btn-primary btn-lg">Continue Shopping</a>
                 <a href="index.html" class="btn btn-outline-secondary btn-lg">Back to Home</a>

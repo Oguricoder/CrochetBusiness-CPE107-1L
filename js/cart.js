@@ -151,14 +151,34 @@ function displayCartItems() {
     const items = getCart();
     
     if (items.length === 0) {
-        cartContainer.innerHTML = `
-            <div class="empty-cart">
-                <i class="fas fa-shopping-cart"></i>
-                <h3>Your cart is empty</h3>
-                <p>Start shopping to add items to your cart!</p>
-                <a href="products.html" class="btn btn-primary btn-lg">Browse Products</a>
+        // If we can locate the surrounding row, replace it with a single full-width
+        // column containing the empty-cart message so it appears centered on the page.
+        const rowEl = cartContainer.closest('.row');
+        const emptyHtml = `
+            <div class="col-12">
+                <div class="empty-cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h3>Your cart is empty</h3>
+                    <p>Start shopping to add items to your cart!</p>
+                    <a href="products.html" class="btn btn-primary btn-lg">Browse Products</a>
+                </div>
             </div>
         `;
+
+        if (rowEl) {
+            rowEl.innerHTML = emptyHtml;
+        } else {
+            // Fallback: replace only the cart container (keeps layout intact)
+            cartContainer.innerHTML = `
+                <div class="empty-cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h3>Your cart is empty</h3>
+                    <p>Start shopping to add items to your cart!</p>
+                    <a href="products.html" class="btn btn-primary btn-lg">Browse Products</a>
+                </div>
+            `;
+        }
+
         if (summaryContainer) {
             summaryContainer.innerHTML = '';
         }
