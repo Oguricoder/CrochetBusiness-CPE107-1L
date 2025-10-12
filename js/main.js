@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Homepage - Load featured and new products
+    
     if (document.getElementById('featured-products')) {
         loadFeaturedProducts();
     }
