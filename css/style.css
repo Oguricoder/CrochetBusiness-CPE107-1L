@@ -43,7 +43,6 @@ body {
 
 /* Rounded gradient primary buttons */
 .btn-primary {
-    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
     border: none;
     color: #fff;
     padding: 10px 26px;
@@ -100,6 +99,13 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
+}
+/* Custom Logo Styling */
+.logo-image {
+    /* Set the desired height for your logo */
+    height: 40px; 
+    width: auto; 
+    margin-right: 10px;
 }
 
 .brand-icon {
@@ -163,7 +169,10 @@ body {
 
 /* Hero Banner */
 .hero-banner {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+   background-image: url('../bg.jpg') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
     min-height: 500px;
     display: flex;
     align-items: center;
@@ -565,7 +574,11 @@ body {
 
 /* Page Header */
 .page-header {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    background-image: url('../bg.jpg'); 
+    background-size: cover;      
+    background-position: center; 
+    background-repeat: no-repeat;
+    
     color: white;
     padding: 60px 0;
     text-align: center;

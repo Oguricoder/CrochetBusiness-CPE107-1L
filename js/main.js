@@ -112,7 +112,7 @@ function showPaymentInstructions(method) {
                 <p>Please send payment to:</p>
                 <div class="payment-details">
                     <p><strong>GCash Number:</strong> 0917-123-4567</p>
-                    <p><strong>Account Name:</strong> STITCH PLEASE!</p>
+                    <p><strong>Account Name:</strong> STITCH, PLEASE!</p>
                 </div>
                 <p class="text-muted small">After placing your order, please send a screenshot of your payment as proof.</p>
             </div>`;
@@ -124,7 +124,7 @@ function showPaymentInstructions(method) {
                 <div class="payment-details">
                     <p><strong>Bank:</strong> BPI</p>
                     <p><strong>Account Number:</strong> 1234-5678-9012</p>
-                    <p><strong>Account Name:</strong> STITCH PLEASE!</p>
+                    <p><strong>Account Name:</strong> STITCH, PLEASE!</p>
                 </div>
                 <p class="text-muted small">Send deposit slip or screenshot as proof of payment.</p>
             </div>`;
