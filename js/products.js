@@ -208,17 +208,26 @@ function displayProducts(productsToDisplay, containerId) {
     container.innerHTML = productsToDisplay.map(product => `
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
             <div class="product-card">
-                <div class="product-image-container">
-                    <img src="${product.image}" alt="${product.name}" class="product-image">
-                    <!-- Removed NEW badge as requested -->
-                </div>
-                <div class="product-info">
-                    <div class="product-category">${product.category.charAt(0).toUpperCase() + product.category.slice(1)}</div>
-                    <h3 class="product-name">${product.name}</h3>
-                    <p class="product-description">${product.description}</p>
-                    <div class="product-footer">
-                        <span class="product-price">₱${product.price}</span>
-                        <button class="btn-add-cart" onclick="addToCart(${product.id})">
+                <a href="product-detail.html?id=${product.id}" style="text-decoration: none; color: inherit;">
+                    <div class="product-image-container">
+                        <img src="${product.image}" alt="${product.name}" class="product-image">
+                        <!-- Removed NEW badge as requested -->
+                    </div>
+                    <div class="product-info">
+                        <div class="product-category">${product.category.charAt(0).toUpperCase() + product.category.slice(1)}</div>
+                        <h3 class="product-name">${product.name}</h3>
+                        <p class="product-description">${product.description}</p>
+                        <div class="product-footer">
+                            <span class="product-price">₱${product.price}</span>
+                        </div>
+                    </div>
+                </a>
+                <div style="padding: 0 20px 20px 20px;">
+                    <div class="d-flex gap-2">
+                        <a href="product-detail.html?id=${product.id}" class="btn btn-outline-primary flex-fill" style="border-radius: 25px; font-weight: 600; text-transform: uppercase; font-size: 0.85rem;">
+                            <i class="fas fa-eye"></i> Details
+                        </a>
+                        <button class="btn-add-cart flex-fill" onclick="addToCart(${product.id}); event.stopPropagation();">
                             <i class="fas fa-cart-plus"></i> Add
                         </button>
                     </div>
