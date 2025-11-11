@@ -1,4 +1,3 @@
-// Shopping Cart Management (persisted to localStorage)
 const CART_STORAGE_KEY = 'crochet_cart_v1';
 let cartItems = [];
 
