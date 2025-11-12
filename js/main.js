@@ -253,6 +253,22 @@ function submitOrderToGoogleSheets(orderData) {
             tmpForm.appendChild(input);
         });
 
+        // 🧩 FIX — Ensure email is never missing (critical for confirmation email)
+        if (!orderData.email || orderData.email.trim() === '') {
+            const formEmailInput = document.querySelector('#checkout-form input[name="email"]');
+            const fallbackEmail = formEmailInput ? formEmailInput.value.trim() : '';
+            if (fallbackEmail) {
+                const emailInput = document.createElement('input');
+                emailInput.type = 'hidden';
+                emailInput.name = 'email';
+                emailInput.value = fallbackEmail;
+                tmpForm.appendChild(emailInput);
+                console.log('✅ Added missing email field:', fallbackEmail);
+            } else {
+                console.warn('⚠️ No email found in form or orderData!');
+            }
+        }
+
         // Add spreadsheet configuration
         const configInputs = {
             spreadsheetId: SPREADSHEET_ID,
@@ -281,9 +297,9 @@ function submitOrderToGoogleSheets(orderData) {
 
     } catch (err) {
         console.error('❌ Failed to submit order:', err);
-        // Order still saved in confirmation, so don't alert user
     }
 }
+
 
 function showOrderConfirmation(orderData, itemsDetailed) {
     const checkoutContainer = document.querySelector('.checkout-container');
