@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // === Configuration ===
 const OWNER_EMAIL = 'jamiahsoophiaguinto@gmail.com';
-const MAIN_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyiTsG_txC_TC1Esz7vy1nexjWBcFIfXtwOPpslbw7vawAFDlumrSbN_RA6HXHmJItu/exec';
+const MAIN_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwfF43f0ph6seF8anxOEtpHLDIl3xMkq234xDvsHtRc3S5oT1XhRXGYP7gtKAEtCtgA/exec';
 const CUSTOM_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby9odO7EKSmICSqQBnPyLqc-KuPj6G1H7A66vdHnmZNL6Yu7udHICZzNm4pHHv954zT/exec';
 const SPREADSHEET_ID = '1g5l54fIHRQyBp2h0gO_B91j68uw7tVmPMEka2ditjfQ';
 const SHARED_SECRET = '';
@@ -232,6 +232,9 @@ function processOrder() {
 
 function submitOrderToGoogleSheets(orderData) {
     try {
+        console.log('📤 Submitting order to Google Sheets...');
+        console.log('Email being sent:', orderData.email);
+        
         // Create hidden iframe for form submission
         const iframe = document.createElement('iframe');
         iframe.style.display = 'none';
@@ -253,22 +256,6 @@ function submitOrderToGoogleSheets(orderData) {
             tmpForm.appendChild(input);
         });
 
-        // 🧩 FIX — Ensure email is never missing (critical for confirmation email)
-        if (!orderData.email || orderData.email.trim() === '') {
-            const formEmailInput = document.querySelector('#checkout-form input[name="email"]');
-            const fallbackEmail = formEmailInput ? formEmailInput.value.trim() : '';
-            if (fallbackEmail) {
-                const emailInput = document.createElement('input');
-                emailInput.type = 'hidden';
-                emailInput.name = 'email';
-                emailInput.value = fallbackEmail;
-                tmpForm.appendChild(emailInput);
-                console.log('✅ Added missing email field:', fallbackEmail);
-            } else {
-                console.warn('⚠️ No email found in form or orderData!');
-            }
-        }
-
         // Add spreadsheet configuration
         const configInputs = {
             spreadsheetId: SPREADSHEET_ID,
@@ -285,8 +272,8 @@ function submitOrderToGoogleSheets(orderData) {
 
         // Submit form
         document.body.appendChild(tmpForm);
+        console.log('✅ Form created with email:', orderData.email);
         tmpForm.submit();
-
         console.log('✅ Order submitted to Google Sheets');
 
         // Cleanup
