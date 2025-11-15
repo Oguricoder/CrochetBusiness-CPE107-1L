@@ -179,7 +179,7 @@ const fallbackProducts = [
 ];
 
 // Configuration - UPDATE THIS WITH YOUR WEB APP URL!
-const MAIN_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxq0oaGFxNp6iXqhWcN5VM_vGD5NxRX4RIxHYbzcS15NtePaSP7PcQHJdDUbIpS5mj3/exec';
+const MAIN_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwV1QFGD0yJ16x3VufItw6skvV2t6PPrQZywppVqau0j_lJuShI2r3CEliCld64tLRs/exec';
 
 // Load products from Google Sheets
 async function loadProductsFromSheets() {

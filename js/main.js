@@ -33,12 +33,10 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 });
 
-// === Configuration ===
+// === Configuration (uses constants from products.js) ===
+// MAIN_WEB_APP_URL is already defined in products.js
 const OWNER_EMAIL = 'jamiahsoophiaguinto@gmail.com';
-const MAIN_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxq0oaGFxNp6iXqhWcN5VM_vGD5NxRX4RIxHYbzcS15NtePaSP7PcQHJdDUbIpS5mj3/exec';
-const CUSTOM_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby9odO7EKSmICSqQBnPyLqc-KuPj6G1H7A66vdHnmZNL6Yu7udHICZzNm4pHHv954zT/exec';
 const SPREADSHEET_ID = '1g5l54fIHRQyBp2h0gO_B91j68uw7tVmPMEka2ditjfQ';
-const SHARED_SECRET = '';
 const GOOGLE_FORM_PROOF_PREFILL = 'https://docs.google.com/forms/d/e/1FAIpQLSczpuvin8w07EFcXr9slA2OVOYVARJHNXxuH8WvHIePi9XdgA/viewform?usp=pp_url&entry.375383761=';
 
 // Load featured products on homepage
@@ -153,14 +151,20 @@ function processOrder() {
         city: formData.get('city')
     };
 
+    console.log('📝 Customer Info:', customer);
+
     // Get cart items and format them properly
     const cartItems = getCart();
+    
+    console.log('🛒 Cart Items:', cartItems);
     
     // Format items as readable string with quantity, color, size
     const itemsFormatted = cartItems.map(item => {
         const subtotal = item.price * item.quantity;
         return `${item.name} (${item.selectedColor}, ${item.selectedSize}) x${item.quantity} - ₱${subtotal}`;
     }).join('; ');
+
+    console.log('📦 Items Formatted:', itemsFormatted);
 
     // Also keep detailed breakdown for display
     const itemsDetailed = cartItems.map(item => ({
@@ -219,10 +223,9 @@ function processOrder() {
         updatedAt: createdAt
     };
 
-    console.log('📦 Order Data Being Sent:');
-    console.log('Order ID:', orderId);
-    console.log('Items:', itemsFormatted);
-    console.log('Full order data:', orderData);
+    console.log('📦 Final Order Data:', orderData);
+    console.log('📧 Email:', orderData.email);
+    console.log('🌐 Web App URL:', MAIN_WEB_APP_URL);
 
     // Show confirmation page first
     showOrderConfirmation(orderData, itemsDetailed);
@@ -235,60 +238,49 @@ function processOrder() {
 function submitOrderToGoogleSheets(orderData) {
     try {
         console.log('📤 Submitting order to Google Sheets...');
-        console.log('Email being sent:', orderData.email);
+        console.log('Using URL:', MAIN_WEB_APP_URL);
         
-        // Create hidden iframe for form submission
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.name = 'order_submit_frame';
-        document.body.appendChild(iframe);
-
-        // Create temporary form
-        const tmpForm = document.createElement('form');
-        tmpForm.method = 'POST';
-        tmpForm.action = MAIN_WEB_APP_URL;
-        tmpForm.target = 'order_submit_frame';
-
-        // Add all order data as hidden inputs
+        // Check if URL is valid
+        if (!MAIN_WEB_APP_URL || MAIN_WEB_APP_URL.includes('/dev')) {
+            console.error('❌ Invalid Web App URL! Must be production URL ending with /exec');
+            alert('⚠️ Configuration Error: Please contact the store owner. Your order details have been saved locally.');
+            return;
+        }
+        
+        // Create FormData
+        const formData = new FormData();
+        
+        // Add all order data
         Object.entries(orderData).forEach(([key, value]) => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = key;
-            input.value = value == null ? '' : String(value);
-            tmpForm.appendChild(input);
+            formData.append(key, value == null ? '' : String(value));
         });
-
+        
         // Add spreadsheet configuration
-        const configInputs = {
-            spreadsheetId: SPREADSHEET_ID,
-            sheetName: 'ORDERS (MAIN)'
-        };
-
-        Object.entries(configInputs).forEach(([key, value]) => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = key;
-            input.value = value;
-            tmpForm.appendChild(input);
+        formData.append('spreadsheetId', SPREADSHEET_ID);
+        formData.append('sheetName', 'ORDERS (MAIN)');
+        
+        console.log('📊 Spreadsheet ID:', SPREADSHEET_ID);
+        console.log('📋 Sheet Name: ORDERS (MAIN)');
+        
+        // Submit using fetch
+        fetch(MAIN_WEB_APP_URL, {
+            method: 'POST',
+            body: formData,
+            mode: 'no-cors'
+        })
+        .then(() => {
+            console.log('✅ Order submitted successfully to Google Sheets');
+        })
+        .catch(err => {
+            console.error('❌ Submission error:', err);
+            console.log('⚠️ Order saved locally, but may not be in Google Sheets');
         });
-
-        // Submit form
-        document.body.appendChild(tmpForm);
-        console.log('✅ Form created with email:', orderData.email);
-        tmpForm.submit();
-        console.log('✅ Order submitted to Google Sheets');
-
-        // Cleanup
-        setTimeout(() => {
-            if (document.body.contains(tmpForm)) document.body.removeChild(tmpForm);
-            if (document.body.contains(iframe)) document.body.removeChild(iframe);
-        }, 2000);
 
     } catch (err) {
         console.error('❌ Failed to submit order:', err);
+        console.log('⚠️ Please contact us to confirm your order');
     }
 }
-
 
 function showOrderConfirmation(orderData, itemsDetailed) {
     const checkoutContainer = document.querySelector('.checkout-container');
