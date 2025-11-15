@@ -1,4 +1,7 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    
+    // Load products from Sheets FIRST
+    await loadProductsFromSheets();
     
     if (document.getElementById('featured-products')) {
         loadFeaturedProducts();
@@ -154,7 +157,6 @@ function processOrder() {
     const cartItems = getCart();
     
     // Format items as readable string with quantity, color, size
-    // Example: "Baby Deer Plush (Pink, Medium) x2 - ₱700; Bear Mittens (Brown, One Size) x1 - ₱450"
     const itemsFormatted = cartItems.map(item => {
         const subtotal = item.price * item.quantity;
         return `${item.name} (${item.selectedColor}, ${item.selectedSize}) x${item.quantity} - ₱${subtotal}`;
@@ -201,7 +203,7 @@ function processOrder() {
         phone: customer.phone,
         address: customer.address,
         city: customer.city,
-        items: itemsFormatted, // ← This is the key field with qty, color, size
+        items: itemsFormatted,
         subtotal: subtotal,
         deliveryFee: deliveryFee,
         total: total,
@@ -416,6 +418,7 @@ function showOrderConfirmation(orderData, itemsDetailed) {
                                         <span>Delivery Fee:</span>
                                         <span>${orderData.deliveryFee > 0 ? '₱' + orderData.deliveryFee : 'FREE'}</span>
                                     </div>
+                                    <hr style="border: 0; border-top: 2px solid #dee2e6; margin: 10px 0;">
                                     <div class="d-flex justify-content-between fs-4 fw-bold text-primary pt-2 border-top">
                                         <span>Total:</span>
                                         <span>₱${orderData.total}</span>
@@ -477,4 +480,9 @@ function showOrderConfirmation(orderData, itemsDetailed) {
     `;
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function setupCustomOrderForm() {
+    // Custom order form setup if needed
+    console.log('Custom order form initialized');
 }

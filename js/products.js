@@ -1,5 +1,12 @@
-// Enhanced Product Database
-const products = [
+// ============================================
+// PRODUCT DATA WITH LIVE INVENTORY
+// ============================================
+
+// This will be populated from Google Sheets
+let products = [];
+
+// Fallback products (in case Sheets API fails)
+const fallbackProducts = [
     {
         id: 1,
         name: "Baby Deer Plush Toy",
@@ -10,7 +17,8 @@ const products = [
         featured: true,
         new: true,
         colors: ["Beige", "White", "Pink"],
-        sizes: ["S", "M"]
+        sizes: ["S", "M"],
+        stock: 0 // Will be updated from Sheets
     },
     {
         id: 2,
@@ -22,7 +30,8 @@ const products = [
         featured: true,
         new: false,
         colors: ["Brown", "Natural"],
-        sizes: ["One Size"]
+        sizes: ["One Size"],
+        stock: 0
     },
     {
         id: 3,
@@ -34,7 +43,8 @@ const products = [
         featured: true,
         new: true,
         colors: ["Purple", "White", "Green"],
-        sizes: ["80x80cm"]
+        sizes: ["80x80cm"],
+        stock: 0
     },
     {
         id: 4,
@@ -46,7 +56,8 @@ const products = [
         featured: false,
         new: true,
         colors: ["Brown", "Mustard", "Cream"],
-        sizes: ["S", "M", "L"]
+        sizes: ["S", "M", "L"],
+        stock: 0
     },
     {
         id: 5,
@@ -58,7 +69,8 @@ const products = [
         featured: false,
         new: false,
         colors: ["Mint", "Cream"],
-        sizes: ["100x100cm"]
+        sizes: ["100x100cm"],
+        stock: 0
     },
     {
         id: 6,
@@ -70,7 +82,8 @@ const products = [
         featured: false,
         new: true,
         colors: ["White", "Green", "Blue"],
-        sizes: ["S", "M", "L"]
+        sizes: ["S", "M", "L"],
+        stock: 0
     },
     {
         id: 7,
@@ -82,7 +95,8 @@ const products = [
         featured: true,
         new: true,
         colors: ["Pink", "Lavender", "Beige"],
-        sizes: ["Standard"]
+        sizes: ["Standard"],
+        stock: 0
     },
     {
         id: 8,
@@ -94,19 +108,21 @@ const products = [
         featured: false,
         new: true,
         colors: ["Brown", "Pink", "White"],
-        sizes: ["S", "M"]
+        sizes: ["S", "M"],
+        stock: 0
     },
     {
         id: 9,
         name: "Ocean Breeze Granny Square Coasters",
         price: 280,
         image: "images/kitechenmats.jpg",
-        description: "Handcrafted crochet coasters with a beautiful gradient from cream to lime green, turquoise, and navy blue, featuring classic granny square pattern and decorative scalloped edges perfect for protecting surfaces with coastal charm.",
+        description: "Handcrafted crochet coasters with a beautiful gradient from cream to lime green, turquoise, and navy blue.",
         category: "home",
         featured: false,
         new: false,
         colors: ["Multicolor"],
-        sizes: ["40x60cm"]
+        sizes: ["40x60cm"],
+        stock: 0
     },
     {
         id: 10,
@@ -118,19 +134,21 @@ const products = [
         featured: false,
         new: true,
         colors: ["Yellow", "White", "Green"],
-        sizes: ["One Size"]
+        sizes: ["One Size"],
+        stock: 0
     },
     {
         id: 11,
         name: "Rainbow Striped Crochet Winter Scrunchie",
         price: 120,
         image: "images/scrunchie.jpg",
-        description: "Handcrafted crochet scrunchie featuring vibrant rainbow stripes in navy blue, magenta, purple, teal, orange, red, and sage green with a cozy textured finish—perfect for adding a colorful, bohemian touch to any hairstyle while being gentle on your hair.",
+        description: "Handcrafted crochet scrunchie featuring vibrant rainbow stripes.",
         category: "accessories",
         featured: false,
         new: true,
         colors: ["Pink", "Lavender", "Blue"],
-        sizes: ["Standard"]
+        sizes: ["Standard"],
+        stock: 0
     },
     {
         id: 12,
@@ -142,21 +160,63 @@ const products = [
         featured: false,
         new: false,
         colors: ["Brown", "Red", "White"],
-        sizes: ["S", "M", "L"]
+        sizes: ["S", "M", "L"],
+        stock: 0
     },
     {
         id: 13,
         name: "Cloud Stitch Beanie",
         price: 280,
         image: "images/beanie.jpg",
-        description: "Stay warm and stylish with the Cloud Stitch Beanie - a soft, hand-crocheted hat featuring a snug fit and subtle texture.",
+        description: "Stay warm and stylish with the Cloud Stitch Beanie.",
         category: "hats",
         featured: false,
         new: false,
         colors: ["Brown", "Red", "White"],
-        sizes: ["S", "M", "L"]
+        sizes: ["S", "M", "L"],
+        stock: 0
     }
 ];
+
+// Configuration - UPDATE THIS WITH YOUR WEB APP URL!
+const MAIN_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxq0oaGFxNp6iXqhWcN5VM_vGD5NxRX4RIxHYbzcS15NtePaSP7PcQHJdDUbIpS5mj3/exec';
+
+// Load products from Google Sheets
+async function loadProductsFromSheets() {
+    try {
+        console.log('📦 Loading products from Google Sheets...');
+        
+        const response = await fetch(MAIN_WEB_APP_URL + '?action=getProducts');
+        const data = await response.json();
+        
+        if (data.success && data.products && data.products.length > 0) {
+            console.log('✅ Received ' + data.products.length + ' products from Sheets');
+            
+            // Merge Sheets data with fallback data
+            products = fallbackProducts.map(fallbackProduct => {
+                const sheetProduct = data.products.find(p => p.id === fallbackProduct.id);
+                
+                if (sheetProduct) {
+                    return {
+                        ...fallbackProduct,
+                        stock: sheetProduct.actualStock || 0,
+                        price: sheetProduct.price || fallbackProduct.price
+                    };
+                }
+                
+                return fallbackProduct;
+            });
+            
+            console.log('✅ Products loaded successfully with stock levels');
+        } else {
+            console.warn('⚠️ No products from Sheets, using fallback');
+            products = fallbackProducts;
+        }
+    } catch (err) {
+        console.error('❌ Failed to load from Sheets:', err);
+        products = fallbackProducts;
+    }
+}
 
 // Get all products
 function getAllProducts() {
@@ -205,13 +265,18 @@ function displayProducts(productsToDisplay, containerId) {
         return;
     }
 
-    container.innerHTML = productsToDisplay.map(product => `
+    container.innerHTML = productsToDisplay.map(product => {
+        const isOutOfStock = product.stock === 0;
+        const isLowStock = product.stock > 0 && product.stock <= 5;
+        
+        return `
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-            <div class="product-card">
+            <div class="product-card ${isOutOfStock ? 'out-of-stock' : ''}">
                 <a href="product-detail.html?id=${product.id}" style="text-decoration: none; color: inherit;">
                     <div class="product-image-container">
                         <img src="${product.image}" alt="${product.name}" class="product-image">
-                        <!-- Removed NEW badge as requested -->
+                        ${isLowStock ? `<span class="stock-badge low">Only ${product.stock} left!</span>` : ''}
+                        ${isOutOfStock ? '<span class="stock-badge out">Out of Stock</span>' : ''}
                     </div>
                     <div class="product-info">
                         <div class="product-category">${product.category.charAt(0).toUpperCase() + product.category.slice(1)}</div>
@@ -227,14 +292,21 @@ function displayProducts(productsToDisplay, containerId) {
                         <a href="product-detail.html?id=${product.id}" class="btn btn-outline-primary flex-fill" style="border-radius: 25px; font-weight: 600; text-transform: uppercase; font-size: 0.85rem;">
                             <i class="fas fa-eye"></i> Details
                         </a>
-                        <button class="btn-add-cart flex-fill" onclick="addToCart(${product.id}); event.stopPropagation();">
-                            <i class="fas fa-cart-plus"></i> Add
-                        </button>
+                        ${!isOutOfStock ? `
+                            <button class="btn-add-cart flex-fill" onclick="addToCart(${product.id}); event.stopPropagation();">
+                                <i class="fas fa-cart-plus"></i> Add
+                            </button>
+                        ` : `
+                            <button class="btn btn-secondary flex-fill" disabled style="border-radius: 25px;">
+                                <i class="fas fa-times"></i> Unavailable
+                            </button>
+                        `}
                     </div>
                 </div>
             </div>
         </div>
-    `).join('');
+    `;
+    }).join('');
 }
 
 // Display product with more details (for product detail page)
@@ -245,6 +317,5 @@ function displayProductDetail(productId) {
         return;
     }
     
-    // This will be used in product-detail.html
     return product;
 }
