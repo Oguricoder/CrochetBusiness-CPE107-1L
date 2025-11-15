@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // === Configuration ===
 const OWNER_EMAIL = 'jamiahsoophiaguinto@gmail.com';
-const MAIN_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz20v1or4ZU6a3WhVg-A4KeFG7mPP50-bMNPjzrIsYRUM3eSRODaKAYVHx_D7QpHR6c/exec';
+const MAIN_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxq0oaGFxNp6iXqhWcN5VM_vGD5NxRX4RIxHYbzcS15NtePaSP7PcQHJdDUbIpS5mj3/exec';
 const CUSTOM_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby9odO7EKSmICSqQBnPyLqc-KuPj6G1H7A66vdHnmZNL6Yu7udHICZzNm4pHHv954zT/exec';
 const SPREADSHEET_ID = '1g5l54fIHRQyBp2h0gO_B91j68uw7tVmPMEka2ditjfQ';
 const SHARED_SECRET = '';
