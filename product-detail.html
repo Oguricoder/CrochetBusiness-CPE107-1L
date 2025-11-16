@@ -86,9 +86,11 @@
                                 <label style="font-weight: 600; font-size: 1rem; color: #212121;">Quantity</label>
                                 <div style="display: flex; align-items: center; border: 2px solid #ddd; border-radius: 8px; overflow: hidden;">
                                     <button onclick="decreaseQuantity()" style="width: 40px; height: 40px; background: white; border: none; cursor: pointer; font-size: 1.2rem;">-</button>
-                                    <input type="number" id="quantity" value="1" min="1" max="99" readonly style="width: 60px; height: 40px; text-align: center; border: none; border-left: 2px solid #ddd; border-right: 2px solid #ddd; font-weight: 600; font-size: 1.1rem;">
+                                    <input type="number" id="quantity" value="1" min="1" readonly style="width: 60px; height: 40px; text-align: center; border: none; border-left: 2px solid #ddd; border-right: 2px solid #ddd; font-weight: 600; font-size: 1.1rem;">
                                     <button onclick="increaseQuantity()" style="width: 40px; height: 40px; background: white; border: none; cursor: pointer; font-size: 1.2rem;">+</button>
                                 </div>
+                            <span id="stock-info" style="font-size: 0.9rem; color: #666;"></span>
+                        </div>
                             </div>
                         </div>
 
@@ -153,141 +155,198 @@
     <script src="js/cart.js"></script>
     <script src="js/main.js"></script>
     
-    <script>
-        let currentProduct = null;
-        let selectedColor = null;
-        let selectedSize = null;
+<script>
+    let currentProduct = null;
+    let selectedColor = null;
+    let selectedSize = null;
 
-        document.addEventListener('DOMContentLoaded', async function() {
-            await loadProductsFromSheets();
-            
-            const urlParams = new URLSearchParams(window.location.search);
-            const productId = parseInt(urlParams.get('id'));
+    document.addEventListener('DOMContentLoaded', async function() {
+        await loadProductsFromSheets();
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = parseInt(urlParams.get('id'));
 
-            if (!productId) {
-                window.location.href = 'products.html';
-                return;
-            }
+        if (!productId) {
+            window.location.href = 'products.html';
+            return;
+        }
 
-            currentProduct = getProductById(productId);
-            
-            if (!currentProduct) {
-                window.location.href = 'products.html';
-                return;
-            }
+        currentProduct = getProductById(productId);
+        
+        if (!currentProduct) {
+            window.location.href = 'products.html';
+            return;
+        }
 
-            displayProductDetails();
+        displayProductDetails();
+    });
+
+    function displayProductDetails() {
+        console.log('Current Product:', currentProduct);
+        
+        document.getElementById('product-title').textContent = currentProduct.name;
+        document.getElementById('product-category').textContent = currentProduct.category.charAt(0).toUpperCase() + currentProduct.category.slice(1);
+        document.getElementById('product-price').textContent = '₱' + currentProduct.price;
+        document.getElementById('product-description').textContent = currentProduct.description || 'No description available';
+        document.getElementById('product-image').src = currentProduct.image;
+        document.getElementById('product-image').alt = currentProduct.name;
+        document.title = currentProduct.name + ' - STITCH, PLEASE!';
+
+        const breadcrumb = document.getElementById('breadcrumb');
+        breadcrumb.innerHTML = `
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item"><a href="products.html">Products</a></li>
+            <li class="breadcrumb-item"><a href="products.html?category=${currentProduct.category}">${currentProduct.category.charAt(0).toUpperCase() + currentProduct.category.slice(1)}</a></li>
+            <li class="breadcrumb-item active">${currentProduct.name}</li>
+        `;
+
+        const colorContainer = document.getElementById('color-options');
+        colorContainer.innerHTML = currentProduct.colors.map((color, index) => 
+            `<div class="color-option ${index === 0 ? 'active' : ''}" onclick="selectColor('${color}', this)" style="padding: 10px 20px; border: 2px solid #ddd; border-radius: 8px; background: white; cursor: pointer; font-weight: 500;">
+                ${color}
+            </div>`
+        ).join('');
+        selectedColor = currentProduct.colors[0];
+
+        const sizeContainer = document.getElementById('size-options');
+        sizeContainer.innerHTML = currentProduct.sizes.map((size, index) => 
+            `<div class="size-option ${index === 0 ? 'active' : ''}" onclick="selectSize('${size}', this)" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border: 2px solid #ddd; border-radius: 8px; background: white; cursor: pointer; font-weight: 600; font-size: 1.1rem;">
+                ${size}
+            </div>`
+        ).join('');
+        selectedSize = currentProduct.sizes[0];
+        
+        // ✅ UPDATE STOCK INFO DISPLAY
+        updateStockInfo();
+    }
+
+    function selectColor(color, element) {
+        selectedColor = color;
+        document.querySelectorAll('.color-option').forEach(opt => {
+            opt.classList.remove('active');
+            opt.style.background = 'white';
+            opt.style.color = '#212121';
+            opt.style.borderColor = '#ddd';
         });
+        element.classList.add('active');
+        element.style.background = '#ff6f91';
+        element.style.color = 'white';
+        element.style.borderColor = '#ff6f91';
+    }
 
-        function displayProductDetails() {
-            console.log('Current Product:', currentProduct);
-            
-            document.getElementById('product-title').textContent = currentProduct.name;
-            document.getElementById('product-category').textContent = currentProduct.category.charAt(0).toUpperCase() + currentProduct.category.slice(1);
-            document.getElementById('product-price').textContent = '₱' + currentProduct.price;
-            document.getElementById('product-description').textContent = currentProduct.description || 'No description available';
-            document.getElementById('product-image').src = currentProduct.image;
-            document.getElementById('product-image').alt = currentProduct.name;
-            document.title = currentProduct.name + ' - STITCH, PLEASE!';
+    function selectSize(size, element) {
+        selectedSize = size;
+        document.querySelectorAll('.size-option').forEach(opt => {
+            opt.classList.remove('active');
+            opt.style.background = 'white';
+            opt.style.color = '#212121';
+            opt.style.borderColor = '#ddd';
+        });
+        element.classList.add('active');
+        element.style.background = '#ff6f91';
+        element.style.color = 'white';
+        element.style.borderColor = '#ff6f91';
+    }
 
-            const breadcrumb = document.getElementById('breadcrumb');
-            breadcrumb.innerHTML = `
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                <li class="breadcrumb-item"><a href="products.html">Products</a></li>
-                <li class="breadcrumb-item"><a href="products.html?category=${currentProduct.category}">${currentProduct.category.charAt(0).toUpperCase() + currentProduct.category.slice(1)}</a></li>
-                <li class="breadcrumb-item active">${currentProduct.name}</li>
-            `;
-
-            const colorContainer = document.getElementById('color-options');
-            colorContainer.innerHTML = currentProduct.colors.map((color, index) => 
-                `<div class="color-option ${index === 0 ? 'active' : ''}" onclick="selectColor('${color}', this)" style="padding: 10px 20px; border: 2px solid #ddd; border-radius: 8px; background: white; cursor: pointer; font-weight: 500;">
-                    ${color}
-                </div>`
-            ).join('');
-            selectedColor = currentProduct.colors[0];
-
-            const sizeContainer = document.getElementById('size-options');
-            sizeContainer.innerHTML = currentProduct.sizes.map((size, index) => 
-                `<div class="size-option ${index === 0 ? 'active' : ''}" onclick="selectSize('${size}', this)" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border: 2px solid #ddd; border-radius: 8px; background: white; cursor: pointer; font-weight: 600; font-size: 1.1rem;">
-                    ${size}
-                </div>`
-            ).join('');
-            selectedSize = currentProduct.sizes[0];
+    // ✅ FIX: Update stock info display
+    function updateStockInfo() {
+        const stockInfo = document.getElementById('stock-info');
+        const currentQty = parseInt(document.getElementById('quantity').value);
+        const availableStock = currentProduct.actualStock || 0;
+        
+        if (availableStock === 0) {
+            stockInfo.innerHTML = '<span style="color: #dc3545; font-weight: 600;">Out of Stock</span>';
+            stockInfo.style.display = 'inline';
+        } else if (availableStock <= 5) {
+            stockInfo.innerHTML = `<span style="color: #856404; font-weight: 600;">Only ${availableStock} available</span>`;
+            stockInfo.style.display = 'inline';
+        } else {
+            stockInfo.innerHTML = `<span style="color: #28a745;">${availableStock} available</span>`;
+            stockInfo.style.display = 'inline';
         }
+    }
 
-        function selectColor(color, element) {
-            selectedColor = color;
-            document.querySelectorAll('.color-option').forEach(opt => {
-                opt.classList.remove('active');
-                opt.style.background = 'white';
-                opt.style.color = '#212121';
-                opt.style.borderColor = '#ddd';
-            });
-            element.classList.add('active');
-            element.style.background = '#ff6f91';
-            element.style.color = 'white';
-            element.style.borderColor = '#ff6f91';
+    // ✅ FIX: Enforce max stock limit
+    function increaseQuantity() {
+        const input = document.getElementById('quantity');
+        const currentValue = parseInt(input.value);
+        const maxStock = currentProduct.actualStock || 0;
+        
+        if (currentValue < maxStock) {
+            input.value = currentValue + 1;
+            updateStockInfo();
+        } else {
+            showNotification(`Only ${maxStock} available in stock!`, 'warning');
         }
+    }
 
-        function selectSize(size, element) {
-            selectedSize = size;
-            document.querySelectorAll('.size-option').forEach(opt => {
-                opt.classList.remove('active');
-                opt.style.background = 'white';
-                opt.style.color = '#212121';
-                opt.style.borderColor = '#ddd';
-            });
-            element.classList.add('active');
-            element.style.background = '#ff6f91';
-            element.style.color = 'white';
-            element.style.borderColor = '#ff6f91';
+    // ✅ FIX: Enforce min limit
+    function decreaseQuantity() {
+        const input = document.getElementById('quantity');
+        const currentValue = parseInt(input.value);
+        if (currentValue > 1) {
+            input.value = currentValue - 1;
+            updateStockInfo();
         }
+    }
 
-        function increaseQuantity() {
-            const input = document.getElementById('quantity');
-            const currentValue = parseInt(input.value);
-            if (currentValue < 99) {
-                input.value = currentValue + 1;
-            }
+    // ✅ FIX: Validate before adding to cart
+    function addCurrentProductToCart() {
+        if (!currentProduct) return;
+
+        const quantity = parseInt(document.getElementById('quantity').value);
+        const maxStock = currentProduct.actualStock || 0;
+        
+        // Check if out of stock
+        if (maxStock === 0) {
+            showNotification(`${currentProduct.name} is out of stock!`, 'error');
+            return;
         }
-
-        function decreaseQuantity() {
-            const input = document.getElementById('quantity');
-            const currentValue = parseInt(input.value);
-            if (currentValue > 1) {
-                input.value = currentValue - 1;
-            }
+        
+        // Check if quantity exceeds stock
+        if (quantity > maxStock) {
+            showNotification(`Only ${maxStock} available! Please adjust quantity.`, 'warning');
+            document.getElementById('quantity').value = maxStock;
+            return;
         }
+        
+        let cart = getCart();
+        
+        const existingItemIndex = cart.findIndex(item => 
+            item.id === currentProduct.id && 
+            item.selectedColor === selectedColor && 
+            item.selectedSize === selectedSize
+        );
 
-        function addCurrentProductToCart() {
-            if (!currentProduct) return;
-
-            const quantity = parseInt(document.getElementById('quantity').value);
-            let cart = getCart();
-            
-            const existingItemIndex = cart.findIndex(item => 
-                item.id === currentProduct.id && 
-                item.selectedColor === selectedColor && 
-                item.selectedSize === selectedSize
-            );
-
-            if (existingItemIndex !== -1) {
-                cart[existingItemIndex].quantity += quantity;
+        // Check if adding this quantity would exceed stock
+        const existingQty = existingItemIndex !== -1 ? cart[existingItemIndex].quantity : 0;
+        const totalQty = existingQty + quantity;
+        
+        if (totalQty > maxStock) {
+            const remaining = maxStock - existingQty;
+            if (remaining > 0) {
+                showNotification(`You already have ${existingQty} in cart. Only ${remaining} more available!`, 'warning');
             } else {
-                cart.push({
-                    ...currentProduct,
-                    quantity: quantity,
-                    selectedColor: selectedColor,
-                    selectedSize: selectedSize
-                });
+                showNotification(`You already have the maximum (${maxStock}) in your cart!`, 'warning');
             }
-
-            cartItems = cart;
-            saveCart();
-            showNotification(`${quantity} ${currentProduct.name} added to cart!`, 'success');
-            document.getElementById('quantity').value = 1;
+            return;
         }
-    </script>
-</body>
-</html>
 
+        if (existingItemIndex !== -1) {
+            cart[existingItemIndex].quantity += quantity;
+        } else {
+            cart.push({
+                ...currentProduct,
+                quantity: quantity,
+                selectedColor: selectedColor,
+                selectedSize: selectedSize
+            });
+        }
+
+        cartItems = cart;
+        saveCart();
+        showNotification(`${quantity} ${currentProduct.name} added to cart!`, 'success');
+        document.getElementById('quantity').value = 1;
+        updateStockInfo();
+    }
+</script>

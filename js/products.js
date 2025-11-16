@@ -1,11 +1,11 @@
 // ============================================
-// FULLY AUTOMATED PRODUCTS.JS
-// ALL DATA FROM GOOGLE SHEETS - NO MANUAL UPDATES
+// UPDATED products.js - FIX FEATURED & NEW
+// Replace your existing products.js with this
 // ============================================
 
 let products = [];
 
-const MAIN_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzXwrbveMCcCDYtsuZsD3oh8P3eAPvBPsY0Ai-5rcc5FGvHPiFwQg7cdIVhRAQdsvg_/exec';
+const MAIN_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxH_R6Ag6jqajQDeBX5w2rdDwmI2Y87K4udAZo9O9Fj4HfymeJAWa-7HpAoUcJ7GTHp/exec';
 
 // ============================================
 // LOAD PRODUCTS FROM SHEETS
@@ -25,6 +25,14 @@ async function loadProductsFromSheets() {
         if (data.success && data.products && data.products.length > 0) {
             console.log('✅ Loaded ' + data.products.length + ' products from Sheets');
             products = data.products;
+            
+            // ✅ DEBUG: Log featured and new products
+            const featured = products.filter(p => p.featured === true);
+            const newArrivals = products.filter(p => p.new === true);
+            
+            console.log('⭐ Featured products:', featured.length, featured.map(p => p.name));
+            console.log('🆕 New arrivals:', newArrivals.length, newArrivals.map(p => p.name));
+            
             console.log('✅ Products ready:', products);
         } else {
             console.warn('⚠️ No products returned from Sheets');
@@ -37,19 +45,25 @@ async function loadProductsFromSheets() {
 }
 
 // ============================================
-// PRODUCT GETTERS
+// PRODUCT GETTERS - FIXED LOGIC
 // ============================================
 
 function getAllProducts() {
     return products;
 }
 
+// ✅ FIX: Only return products where featured === true (boolean true, not string)
 function getFeaturedProducts() {
-    return products.filter(p => p.featured === true);
+    const featured = products.filter(p => p.featured === true);
+    console.log('📌 getFeaturedProducts called, returning:', featured.length, 'products');
+    return featured;
 }
 
+// ✅ FIX: Only return products where new === true (boolean true, not string)
 function getNewArrivals() {
-    return products.filter(p => p.new === true);
+    const newProducts = products.filter(p => p.new === true);
+    console.log('📌 getNewArrivals called, returning:', newProducts.length, 'products');
+    return newProducts;
 }
 
 function getProductById(id) {

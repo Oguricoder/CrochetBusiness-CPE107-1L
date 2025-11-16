@@ -33,22 +33,45 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 });
 
-// === Configuration (uses constants from products.js) ===
-// MAIN_WEB_APP_URL is already defined in products.js
+// === Configuration ===
 const OWNER_EMAIL = 'jamiahsoophiaguinto@gmail.com';
 const SPREADSHEET_ID = '1g5l54fIHRQyBp2h0gO_B91j68uw7tVmPMEka2ditjfQ';
 const GOOGLE_FORM_PROOF_PREFILL = 'https://docs.google.com/forms/d/e/1FAIpQLSczpuvin8w07EFcXr9slA2OVOYVARJHNXxuH8WvHIePi9XdgA/viewform?usp=pp_url&entry.375383761=';
 
-// Load featured products on homepage
+// ============================================
+// FIXED: Load featured products on homepage
+// ============================================
 function loadFeaturedProducts() {
-    const featured = getFeaturedProducts().slice(0, 4);
-    displayProducts(featured, 'featured-products');
+    console.log('🏠 Loading featured products for homepage...');
+    const featured = getFeaturedProducts();
+    console.log('📌 Featured products to display:', featured.length);
+    
+    // ✅ If no featured products, show first 4 products instead
+    if (featured.length === 0) {
+        console.warn('⚠️ No featured products found, showing first 4 products');
+        const fallback = getAllProducts().slice(0, 4);
+        displayProducts(fallback, 'featured-products');
+    } else {
+        displayProducts(featured.slice(0, 4), 'featured-products');
+    }
 }
 
-// Load new arrivals on homepage
+// ============================================
+// FIXED: Load new arrivals on homepage
+// ============================================
 function loadNewArrivals() {
-    const all = getAllProducts().slice(0, 6);
-    displayProducts(all, 'new-arrivals');
+    console.log('🆕 Loading new arrivals for homepage...');
+    const newArrivals = getNewArrivals();
+    console.log('📌 New arrivals to display:', newArrivals.length);
+    
+    // ✅ If no new arrivals, show first 6 products instead
+    if (newArrivals.length === 0) {
+        console.warn('⚠️ No new arrivals found, showing first 6 products');
+        const fallback = getAllProducts().slice(0, 6);
+        displayProducts(fallback, 'new-arrivals');
+    } else {
+        displayProducts(newArrivals.slice(0, 6), 'new-arrivals');
+    }
 }
 
 // Load all products with category filter
@@ -151,22 +174,13 @@ function processOrder() {
         city: formData.get('city')
     };
 
-    console.log('📝 Customer Info:', customer);
-
-    // Get cart items and format them properly
     const cartItems = getCart();
     
-    console.log('🛒 Cart Items:', cartItems);
-    
-    // Format items as readable string with quantity, color, size
     const itemsFormatted = cartItems.map(item => {
         const subtotal = item.price * item.quantity;
         return `${item.name} (${item.selectedColor}, ${item.selectedSize}) x${item.quantity} - ₱${subtotal}`;
     }).join('; ');
 
-    console.log('📦 Items Formatted:', itemsFormatted);
-
-    // Also keep detailed breakdown for display
     const itemsDetailed = cartItems.map(item => ({
         productId: item.id,
         name: item.name,
@@ -177,7 +191,6 @@ function processOrder() {
         subtotal: item.price * item.quantity
     }));
 
-    // Generate order details
     const orderId = generateOrderId();
     const now = new Date();
     const orderDate = now.toLocaleString('en-PH', { 
@@ -198,40 +211,33 @@ function processOrder() {
     const deliveryOption = formData.get('delivery-option');
     const notes = formData.get('notes') || '';
 
-    // Order data for Google Sheets
     const orderData = {
-        orderId: orderId,
-        orderDate: orderDate,
-        customerName: customer.name,
-        email: customer.email,
-        phone: customer.phone,
-        address: customer.address,
-        city: customer.city,
-        items: itemsFormatted,
-        subtotal: subtotal,
-        deliveryFee: deliveryFee,
-        total: total,
-        paymentMethod: paymentMethod,
+        orderId: orderId || '',
+        orderDate: orderDate || '',
+        customerName: customer.name || '',
+        email: customer.email || '',
+        phone: customer.phone || '',
+        address: customer.address || '',
+        city: customer.city || '',
+        items: itemsFormatted || '',
+        subtotal: subtotal || 0,
+        deliveryFee: deliveryFee || 0,
+        total: total || 0,
+        paymentMethod: paymentMethod || '',
         paymentStatus: paymentMethod === 'cod' ? 'COD' : 'Pending Payment',
         orderStatus: 'New Order',
         paymentRef: '',
         proofUrl: '',
         deliveryCompany: '',
-        deliveryOption: deliveryOption,
-        notes: notes,
-        createdAt: createdAt,
-        updatedAt: createdAt
-    };
+        deliveryOption: deliveryOption || 'standard',
+        notes: notes || '',
+        createdAt: createdAt || new Date().toISOString(),
+        updatedAt: createdAt || new Date().toISOString()
+};
 
-    console.log('📦 Final Order Data:', orderData);
-    console.log('📧 Email:', orderData.email);
-    console.log('🌐 Web App URL:', MAIN_WEB_APP_URL);
-
-    // Show confirmation page first
     showOrderConfirmation(orderData, itemsDetailed);
     clearCart();
 
-    // Submit to Google Sheets in background
     submitOrderToGoogleSheets(orderData);
 }
 
@@ -240,55 +246,64 @@ function submitOrderToGoogleSheets(orderData) {
         console.log('📤 Submitting order to Google Sheets...');
         console.log('Using URL:', MAIN_WEB_APP_URL);
         
-        // Check if URL is valid
         if (!MAIN_WEB_APP_URL || MAIN_WEB_APP_URL.includes('/dev')) {
-            console.error('❌ Invalid Web App URL! Must be production URL ending with /exec');
-            alert('⚠️ Configuration Error: Please contact the store owner. Your order details have been saved locally.');
+            console.error('❌ Invalid Web App URL!');
+            alert('⚠️ Configuration Error: Please contact the store owner.');
             return;
         }
         
-        // Create FormData
         const formData = new FormData();
         
-        // Add all order data
-        Object.entries(orderData).forEach(([key, value]) => {
-            formData.append(key, value == null ? '' : String(value));
-        });
+        // Add ALL fields explicitly
+        formData.append('orderId', orderData.orderId || '');
+        formData.append('orderDate', orderData.orderDate || '');
+        formData.append('customerName', orderData.customerName || '');
+        formData.append('email', orderData.email || '');
+        formData.append('phone', orderData.phone || '');
+        formData.append('address', orderData.address || '');
+        formData.append('city', orderData.city || '');
+        formData.append('items', orderData.items || '');
+        formData.append('subtotal', orderData.subtotal || 0);
+        formData.append('deliveryFee', orderData.deliveryFee || 0);
+        formData.append('total', orderData.total || 0);
+        formData.append('paymentMethod', orderData.paymentMethod || '');
+        formData.append('paymentStatus', orderData.paymentStatus || 'Pending Payment');
+        formData.append('orderStatus', orderData.orderStatus || 'New Order');
+        formData.append('paymentRef', orderData.paymentRef || '');
+        formData.append('proofUrl', orderData.proofUrl || '');
+        formData.append('deliveryCompany', orderData.deliveryCompany || '');
+        formData.append('deliveryOption', orderData.deliveryOption || 'standard');
+        formData.append('notes', orderData.notes || '');
+        formData.append('createdAt', orderData.createdAt || new Date().toISOString());
+        formData.append('updatedAt', orderData.updatedAt || new Date().toISOString());
         
-        // Add spreadsheet configuration
         formData.append('spreadsheetId', SPREADSHEET_ID);
         formData.append('sheetName', 'ORDERS (MAIN)');
         
-        console.log('📊 Spreadsheet ID:', SPREADSHEET_ID);
-        console.log('📋 Sheet Name: ORDERS (MAIN)');
+        console.log('📦 Full order data:', orderData);
         
-        // Submit using fetch
         fetch(MAIN_WEB_APP_URL, {
             method: 'POST',
             body: formData,
             mode: 'no-cors'
         })
         .then(() => {
-            console.log('✅ Order submitted successfully to Google Sheets');
+            console.log('✅ Order submitted successfully');
         })
         .catch(err => {
             console.error('❌ Submission error:', err);
-            console.log('⚠️ Order saved locally, but may not be in Google Sheets');
         });
 
     } catch (err) {
         console.error('❌ Failed to submit order:', err);
-        console.log('⚠️ Please contact us to confirm your order');
     }
 }
-
 function showOrderConfirmation(orderData, itemsDetailed) {
     const checkoutContainer = document.querySelector('.checkout-container');
     if (!checkoutContainer) return;
     
     const paymentMethodLabel = (orderData.paymentMethod || '').toUpperCase().replace('-', ' ');
     
-    // Format items for display
     const itemsList = itemsDetailed.map(item => 
         `<div class="d-flex justify-content-between align-items-start border-bottom py-3">
             <div class="flex-grow-1">
@@ -306,7 +321,6 @@ function showOrderConfirmation(orderData, itemsDetailed) {
         </div>`
     ).join('');
 
-    // Payment instructions based on method
     let paymentInstructionsHTML = '';
     
     if (orderData.paymentMethod === 'gcash') {
@@ -368,7 +382,6 @@ function showOrderConfirmation(orderData, itemsDetailed) {
                 <div class="col-lg-8">
                     <div class="order-confirmation bg-white p-4 p-md-5 rounded shadow-sm">
                         
-                        <!-- Success Header -->
                         <div class="text-center mb-4">
                             <div class="mb-3">
                                 <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
@@ -380,7 +393,6 @@ function showOrderConfirmation(orderData, itemsDetailed) {
                             </div>
                         </div>
 
-                        <!-- Order Summary -->
                         <div class="card mb-4 shadow-sm">
                             <div class="card-header bg-primary text-white">
                                 <h5 class="card-title mb-0"><i class="fas fa-receipt me-2"></i>Order Summary</h5>
@@ -440,7 +452,6 @@ function showOrderConfirmation(orderData, itemsDetailed) {
                             </div>
                         ` : ''}
 
-                        <!-- Next Steps -->
                         <div class="card mb-4 shadow-sm">
                             <div class="card-header bg-success text-white">
                                 <h5 class="card-title mb-0"><i class="fas fa-list-check me-2"></i>What Happens Next?</h5>
@@ -455,7 +466,6 @@ function showOrderConfirmation(orderData, itemsDetailed) {
                             </div>
                         </div>
 
-                        <!-- Action Buttons -->
                         <div class="d-grid gap-2 d-md-flex justify-content-md-center">
                             <a href="products.html" class="btn btn-primary btn-lg">
                                 <i class="fas fa-shopping-bag me-2"></i> Continue Shopping
@@ -475,6 +485,5 @@ function showOrderConfirmation(orderData, itemsDetailed) {
 }
 
 function setupCustomOrderForm() {
-    // Custom order form setup if needed
     console.log('Custom order form initialized');
 }
