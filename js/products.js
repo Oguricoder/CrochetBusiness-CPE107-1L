@@ -5,7 +5,7 @@
 
 let products = [];
 
-const MAIN_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzhjAFtWFAikJ_gwtbLDlUG5iOUIOuvkTTvO_Cf31sbjRV531mi2Ai8opvRBczysC0g/exec';
+const MAIN_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzXwrbveMCcCDYtsuZsD3oh8P3eAPvBPsY0Ai-5rcc5FGvHPiFwQg7cdIVhRAQdsvg_/exec';
 
 // ============================================
 // LOAD PRODUCTS FROM SHEETS
