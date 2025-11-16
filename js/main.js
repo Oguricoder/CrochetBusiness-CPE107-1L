@@ -27,10 +27,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         setupCheckoutForm();
     }
     
-    // Custom order page
-    if (document.getElementById('custom-order-form')) {
-        setupCustomOrderForm();
-    }
 });
 
 // === Configuration ===
@@ -254,7 +250,7 @@ function submitOrderToGoogleSheets(orderData) {
         
         const formData = new FormData();
         
-        // Add ALL fields explicitly
+        
         formData.append('orderId', orderData.orderId || '');
         formData.append('orderDate', orderData.orderDate || '');
         formData.append('customerName', orderData.customerName || '');
@@ -279,7 +275,8 @@ function submitOrderToGoogleSheets(orderData) {
         
         formData.append('spreadsheetId', SPREADSHEET_ID);
         formData.append('sheetName', 'ORDERS (MAIN)');
-        
+        formData.append('itemsJson', JSON.stringify(itemsDetailed));
+
         console.log('📦 Full order data:', orderData);
         
         fetch(MAIN_WEB_APP_URL, {
@@ -459,7 +456,7 @@ function showOrderConfirmation(orderData, itemsDetailed) {
                             <div class="card-body">
                                 <ul class="list-unstyled mb-0">
                                     <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Confirmation email sent to <strong>${orderData.email}</strong></li>
-                                    <li class="mb-2"><i class="fas fa-phone text-success me-2"></i> We'll call <strong>${orderData.phone}</strong> to confirm</li>
+                                    <li class="mb-2"><i class="fas fa-phone text-success me-2"></i> We'll contact <strong>${orderData.phone}</strong> to confirm</li>
                                     ${orderData.paymentMethod !== 'cod' ? '<li class="mb-2"><i class="fas fa-clock text-warning me-2"></i> Payment verification within 24 hours</li>' : ''}
                                     <li class="mb-0"><i class="fas fa-truck text-info me-2"></i> Delivery in <strong>${orderData.deliveryOption === 'express' ? '1-2' : '3-5'} days</strong></li>
                                 </ul>
@@ -482,8 +479,4 @@ function showOrderConfirmation(orderData, itemsDetailed) {
     `;
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function setupCustomOrderForm() {
-    console.log('Custom order form initialized');
 }
