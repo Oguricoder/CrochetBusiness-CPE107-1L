@@ -7,245 +7,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        .product-detail-section {
-            padding: 60px 0;
-        }
-        
-        .product-main-image {
-            width: 100%;
-            height: auto;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-        
-        .product-detail-info {
-            position: sticky;
-            top: 100px;
-        }
-        
-        .product-detail-title {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--dark-color);
-            margin-bottom: 10px;
-        }
-        
-        .product-detail-category {
-            display: inline-block;
-            background: var(--light-color);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            color: var(--primary-color);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 20px;
-        }
-        
-        .product-detail-price {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin: 20px 0;
-        }
-        
-        .product-detail-description {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: #555;
-            margin-bottom: 30px;
-        }
-        
-        .product-options {
-            background: var(--light-color);
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-        }
-        
-        .option-group {
-            margin-bottom: 20px;
-        }
-        
-        .option-group label {
-            font-weight: 600;
-            font-size: 1rem;
-            color: var(--dark-color);
-            margin-bottom: 10px;
-            display: block;
-        }
-        
-        .color-options {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .color-option {
-            padding: 10px 20px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 500;
-        }
-        
-        .color-option:hover {
-            border-color: var(--primary-color);
-        }
-        
-        .color-option.active {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-        
-        .size-options {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .size-option {
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-        
-        .size-option:hover {
-            border-color: var(--primary-color);
-        }
-        
-        .size-option.active {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-        
-        .quantity-selector {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        
-        .quantity-selector label {
-            font-weight: 600;
-            font-size: 1rem;
-            color: var(--dark-color);
-        }
-        
-        .quantity-controls {
-            display: flex;
-            align-items: center;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        
-        .quantity-btn {
-            width: 40px;
-            height: 40px;
-            background: white;
-            border: none;
-            cursor: pointer;
-            font-size: 1.2rem;
-            color: var(--dark-color);
-            transition: all 0.3s;
-        }
-        
-        .quantity-btn:hover {
-            background: var(--light-color);
-        }
-        
-        .quantity-input {
-            width: 60px;
-            height: 40px;
-            text-align: center;
-            border: none;
-            border-left: 2px solid var(--border-color);
-            border-right: 2px solid var(--border-color);
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-        
-        .add-to-cart-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border: none;
-            border-radius: 30px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 8px 20px rgba(142,68,173,0.12);
-        }
-        
-        .add-to-cart-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(142,68,173,0.18);
-        }
-        
-        .product-features {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            margin-top: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        
-        .product-features h5 {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        
-        .feature-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 10px 0;
-        }
-        
-        .feature-item i {
-            font-size: 1.5rem;
-            color: var(--primary-color);
-            width: 30px;
-        }
-        
-        .breadcrumb {
-            background: transparent;
-            padding: 20px 0;
-        }
-        
-        .breadcrumb-item a {
-            color: var(--dark-color);
-            text-decoration: none;
-        }
-        
-        .breadcrumb-item a:hover {
-            color: var(--primary-color);
-        }
-        
-        .breadcrumb-item.active {
-            color: #999;
-        }
-    </style>
 </head>
 <body>
     <!-- Top Bar -->
@@ -274,24 +35,12 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">HOME</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="products.html">ALL PRODUCTS</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="products.html?category=hats">HATS</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="products.html?category=bags">BAGS</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="products.html?category=clothing">CLOTHING</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="products.html?category=accessories">ACCESSORIES</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="index.html">HOME</a></li>
+                    <li class="nav-item"><a class="nav-link" href="products.html">ALL PRODUCTS</a></li>
+                    <li class="nav-item"><a class="nav-link" href="products.html?category=hats">HATS</a></li>
+                    <li class="nav-item"><a class="nav-link" href="products.html?category=bags">BAGS</a></li>
+                    <li class="nav-item"><a class="nav-link" href="products.html?category=clothing">CLOTHING</a></li>
+                    <li class="nav-item"><a class="nav-link" href="products.html?category=accessories">ACCESSORIES</a></li>
                 </ul>
                 <div class="navbar-actions">
                     <a href="cart.html" class="cart-button">
@@ -306,85 +55,60 @@
     <!-- Breadcrumb -->
     <div class="container">
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb" id="breadcrumb">
-                <!-- Loaded by JavaScript -->
-            </ol>
+            <ol class="breadcrumb" id="breadcrumb"></ol>
         </nav>
     </div>
 
-    <!-- Product Detail Section -->
-    <section class="product-detail-section">
+    <!-- Product Detail -->
+    <section class="product-detail-section" style="padding: 60px 0;">
         <div class="container">
             <div class="row g-5">
-                <!-- Product Image -->
                 <div class="col-lg-6">
-                    <img id="product-image" src="" alt="" class="product-main-image">
+                    <img id="product-image" src="" alt="" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
                 </div>
-
-                <!-- Product Info -->
                 <div class="col-lg-6">
-                    <div class="product-detail-info">
-                        <span id="product-category" class="product-detail-category"></span>
-                        <h1 id="product-title" class="product-detail-title"></h1>
-                        <p id="product-price" class="product-detail-price"></p>
-                        <p id="product-description" class="product-detail-description"></p>
+                    <div style="position: sticky; top: 100px;">
+                        <span id="product-category" style="display: inline-block; background: #f5f5f5; padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; color: #ff6f91; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px;"></span>
+                        <h1 id="product-title" style="font-size: 2rem; font-weight: bold; color: #212121; margin-bottom: 10px;"></h1>
+                        <p id="product-price" style="font-size: 2.5rem; font-weight: bold; color: #ff6f91; margin: 20px 0;"></p>
+                        <p id="product-description" style="font-size: 1.1rem; line-height: 1.8; color: #555; margin-bottom: 30px;"></p>
 
-                        <!-- Product Options -->
-                        <div class="product-options">
-                            <!-- Color Selection -->
-                            <div class="option-group" id="color-group">
-                                <label>Select Color</label>
-                                <div class="color-options" id="color-options">
-                                    <!-- Loaded by JavaScript -->
-                                </div>
+                        <div style="background: #f5f5f5; padding: 25px; border-radius: 12px; margin-bottom: 30px;">
+                            <div style="margin-bottom: 20px;">
+                                <label style="font-weight: 600; font-size: 1rem; color: #212121; margin-bottom: 10px; display: block;">Select Color</label>
+                                <div id="color-options" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
                             </div>
-
-                            <!-- Size Selection -->
-                            <div class="option-group" id="size-group">
-                                <label>Select Size</label>
-                                <div class="size-options" id="size-options">
-                                    <!-- Loaded by JavaScript -->
-                                </div>
+                            <div style="margin-bottom: 20px;">
+                                <label style="font-weight: 600; font-size: 1rem; color: #212121; margin-bottom: 10px; display: block;">Select Size</label>
+                                <div id="size-options" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
                             </div>
-
-                            <!-- Quantity Selector -->
-                            <div class="quantity-selector">
-                                <label>Quantity</label>
-                                <div class="quantity-controls">
-                                    <button class="quantity-btn" onclick="decreaseQuantity()">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
-                                    <input type="number" id="quantity" class="quantity-input" value="1" min="1" max="99" readonly>
-                                    <button class="quantity-btn" onclick="increaseQuantity()">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
+                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 30px;">
+                                <label style="font-weight: 600; font-size: 1rem; color: #212121;">Quantity</label>
+                                <div style="display: flex; align-items: center; border: 2px solid #ddd; border-radius: 8px; overflow: hidden;">
+                                    <button onclick="decreaseQuantity()" style="width: 40px; height: 40px; background: white; border: none; cursor: pointer; font-size: 1.2rem;">-</button>
+                                    <input type="number" id="quantity" value="1" min="1" max="99" readonly style="width: 60px; height: 40px; text-align: center; border: none; border-left: 2px solid #ddd; border-right: 2px solid #ddd; font-weight: 600; font-size: 1.1rem;">
+                                    <button onclick="increaseQuantity()" style="width: 40px; height: 40px; background: white; border: none; cursor: pointer; font-size: 1.2rem;">+</button>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Add to Cart Button -->
-                        <button class="add-to-cart-btn" onclick="addCurrentProductToCart()">
+                        <button onclick="addCurrentProductToCart()" style="width: 100%; padding: 15px; background: linear-gradient(90deg, #ff6f91, #8e44ad); color: white; border: none; border-radius: 30px; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; box-shadow: 0 8px 20px rgba(142,68,173,0.12);">
                             <i class="fas fa-shopping-cart"></i> Add to Cart
                         </button>
 
-                        <!-- Product Features -->
-                        <div class="product-features">
-                            <h5>Product Features</h5>
-                            <div class="feature-item">
-                                <i class="fas fa-hand-holding-heart"></i>
+                        <div style="background: white; border-radius: 12px; padding: 25px; margin-top: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                            <h5 style="font-size: 1.2rem; font-weight: bold; margin-bottom: 20px;">Product Features</h5>
+                            <div style="display: flex; align-items: center; gap: 15px; padding: 10px 0;">
+                                <i class="fas fa-hand-holding-heart" style="font-size: 1.5rem; color: #ff6f91;"></i>
                                 <span>100% Handmade with love and care</span>
                             </div>
-                            <div class="feature-item">
-                                <i class="fas fa-shield-alt"></i>
+                            <div style="display: flex; align-items: center; gap: 15px; padding: 10px 0;">
+                                <i class="fas fa-shield-alt" style="font-size: 1.5rem; color: #ff6f91;"></i>
                                 <span>Premium quality materials</span>
                             </div>
-                            <div class="feature-item">
-                                <i class="fas fa-truck"></i>
+                            <div style="display: flex; align-items: center; gap: 15px; padding: 10px 0;">
+                                <i class="fas fa-truck" style="font-size: 1.5rem; color: #ff6f91;"></i>
                                 <span>Fast and reliable shipping</span>
-                            </div>
-                            <div class="feature-item">
-                                <i class="fas fa-palette"></i>
-                                <span>Custom colors available on request</span>
                             </div>
                         </div>
                     </div>
@@ -399,7 +123,7 @@
             <div class="row">
                 <div class="col-md-4 mb-4">
                     <h5>About Us</h5>
-                    <p>We create beautiful, handmade crochet items with love and attention to detail. Each piece is unique and made to order.</p>
+                    <p>We create beautiful, handmade crochet items with love and attention to detail.</p>
                 </div>
                 <div class="col-md-4 mb-4">
                     <h5>Quick Links</h5>
@@ -434,8 +158,9 @@
         let selectedColor = null;
         let selectedSize = null;
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // Get product ID from URL
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadProductsFromSheets();
+            
             const urlParams = new URLSearchParams(window.location.search);
             const productId = parseInt(urlParams.get('id'));
 
@@ -444,7 +169,6 @@
                 return;
             }
 
-            // Load product details
             currentProduct = getProductById(productId);
             
             if (!currentProduct) {
@@ -452,23 +176,20 @@
                 return;
             }
 
-            // Display product
             displayProductDetails();
         });
 
         function displayProductDetails() {
-            // Set basic info
+            console.log('Current Product:', currentProduct);
+            
             document.getElementById('product-title').textContent = currentProduct.name;
             document.getElementById('product-category').textContent = currentProduct.category.charAt(0).toUpperCase() + currentProduct.category.slice(1);
             document.getElementById('product-price').textContent = '₱' + currentProduct.price;
-            document.getElementById('product-description').textContent = currentProduct.description;
+            document.getElementById('product-description').textContent = currentProduct.description || 'No description available';
             document.getElementById('product-image').src = currentProduct.image;
             document.getElementById('product-image').alt = currentProduct.name;
-
-            // Update page title
             document.title = currentProduct.name + ' - STITCH, PLEASE!';
 
-            // Display breadcrumb
             const breadcrumb = document.getElementById('breadcrumb');
             breadcrumb.innerHTML = `
                 <li class="breadcrumb-item"><a href="index.html">Home</a></li>
@@ -477,19 +198,17 @@
                 <li class="breadcrumb-item active">${currentProduct.name}</li>
             `;
 
-            // Display color options
             const colorContainer = document.getElementById('color-options');
             colorContainer.innerHTML = currentProduct.colors.map((color, index) => 
-                `<div class="color-option ${index === 0 ? 'active' : ''}" onclick="selectColor('${color}', this)">
+                `<div class="color-option ${index === 0 ? 'active' : ''}" onclick="selectColor('${color}', this)" style="padding: 10px 20px; border: 2px solid #ddd; border-radius: 8px; background: white; cursor: pointer; font-weight: 500;">
                     ${color}
                 </div>`
             ).join('');
             selectedColor = currentProduct.colors[0];
 
-            // Display size options
             const sizeContainer = document.getElementById('size-options');
             sizeContainer.innerHTML = currentProduct.sizes.map((size, index) => 
-                `<div class="size-option ${index === 0 ? 'active' : ''}" onclick="selectSize('${size}', this)">
+                `<div class="size-option ${index === 0 ? 'active' : ''}" onclick="selectSize('${size}', this)" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border: 2px solid #ddd; border-radius: 8px; background: white; cursor: pointer; font-weight: 600; font-size: 1.1rem;">
                     ${size}
                 </div>`
             ).join('');
@@ -498,14 +217,30 @@
 
         function selectColor(color, element) {
             selectedColor = color;
-            document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
+            document.querySelectorAll('.color-option').forEach(opt => {
+                opt.classList.remove('active');
+                opt.style.background = 'white';
+                opt.style.color = '#212121';
+                opt.style.borderColor = '#ddd';
+            });
             element.classList.add('active');
+            element.style.background = '#ff6f91';
+            element.style.color = 'white';
+            element.style.borderColor = '#ff6f91';
         }
 
         function selectSize(size, element) {
             selectedSize = size;
-            document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('active'));
+            document.querySelectorAll('.size-option').forEach(opt => {
+                opt.classList.remove('active');
+                opt.style.background = 'white';
+                opt.style.color = '#212121';
+                opt.style.borderColor = '#ddd';
+            });
             element.classList.add('active');
+            element.style.background = '#ff6f91';
+            element.style.color = 'white';
+            element.style.borderColor = '#ff6f91';
         }
 
         function increaseQuantity() {
@@ -528,11 +263,8 @@
             if (!currentProduct) return;
 
             const quantity = parseInt(document.getElementById('quantity').value);
-            
-            // Get existing cart
             let cart = getCart();
             
-            // Check if product with same options exists
             const existingItemIndex = cart.findIndex(item => 
                 item.id === currentProduct.id && 
                 item.selectedColor === selectedColor && 
@@ -540,10 +272,8 @@
             );
 
             if (existingItemIndex !== -1) {
-                // Update quantity of existing item
                 cart[existingItemIndex].quantity += quantity;
             } else {
-                // Add new item to cart
                 cart.push({
                     ...currentProduct,
                     quantity: quantity,
@@ -552,29 +282,12 @@
                 });
             }
 
-            // Save cart
             cartItems = cart;
             saveCart();
-            
             showNotification(`${quantity} ${currentProduct.name} added to cart!`, 'success');
-            
-            // Reset quantity to 1
             document.getElementById('quantity').value = 1;
         }
     </script>
-
-    <!--Start of Tawk.to Script-->
-    <script type="text/javascript">
-    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-    (function(){
-    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true;
-    s1.src='https://embed.tawk.to/68ea0e488c23bb194e60d798/1j794fiuq';
-    s1.charset='UTF-8';
-    s1.setAttribute('crossorigin','*');
-    s0.parentNode.insertBefore(s1,s0);
-    })();
-    </script>
-    <!--End of Tawk.to Script-->
 </body>
 </html>
+
