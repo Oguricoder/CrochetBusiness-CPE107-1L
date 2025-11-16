@@ -234,67 +234,93 @@ function processOrder() {
     showOrderConfirmation(orderData, itemsDetailed);
     clearCart();
 
-    submitOrderToGoogleSheets(orderData);
+    submitOrderToGoogleSheets(orderData, itemsDetailed);
 }
 
-function submitOrderToGoogleSheets(orderData) {
-    try {
-        console.log('📤 Submitting order to Google Sheets...');
-        console.log('Using URL:', MAIN_WEB_APP_URL);
-        
-        if (!MAIN_WEB_APP_URL || MAIN_WEB_APP_URL.includes('/dev')) {
-            console.error('❌ Invalid Web App URL!');
-            alert('⚠️ Configuration Error: Please contact the store owner.');
-            return;
-        }
-        
-        const formData = new FormData();
-        
-        
-        formData.append('orderId', orderData.orderId || '');
-        formData.append('orderDate', orderData.orderDate || '');
-        formData.append('customerName', orderData.customerName || '');
-        formData.append('email', orderData.email || '');
-        formData.append('phone', orderData.phone || '');
-        formData.append('address', orderData.address || '');
-        formData.append('city', orderData.city || '');
-        formData.append('items', orderData.items || '');
-        formData.append('subtotal', orderData.subtotal || 0);
-        formData.append('deliveryFee', orderData.deliveryFee || 0);
-        formData.append('total', orderData.total || 0);
-        formData.append('paymentMethod', orderData.paymentMethod || '');
-        formData.append('paymentStatus', orderData.paymentStatus || 'Pending Payment');
-        formData.append('orderStatus', orderData.orderStatus || 'New Order');
-        formData.append('paymentRef', orderData.paymentRef || '');
-        formData.append('proofUrl', orderData.proofUrl || '');
-        formData.append('deliveryCompany', orderData.deliveryCompany || '');
-        formData.append('deliveryOption', orderData.deliveryOption || 'standard');
-        formData.append('notes', orderData.notes || '');
-        formData.append('createdAt', orderData.createdAt || new Date().toISOString());
-        formData.append('updatedAt', orderData.updatedAt || new Date().toISOString());
-        
-        formData.append('spreadsheetId', SPREADSHEET_ID);
-        formData.append('sheetName', 'ORDERS (MAIN)');
-        formData.append('itemsJson', JSON.stringify(itemsDetailed));
+// Submit the order to Google Sheets (Apps Script Web App)
+// PATCHED: now accepts itemsDetailed and sends it as itemsJson
+function submitOrderToGoogleSheets(orderData, itemsDetailed) {
+  try {
+    console.log('📤 Submitting order to Google Sheets...');
+    console.log('Using URL:', MAIN_WEB_APP_URL);
 
-        console.log('📦 Full order data:', orderData);
-        
-        fetch(MAIN_WEB_APP_URL, {
-            method: 'POST',
-            body: formData,
-            mode: 'no-cors'
-        })
-        .then(() => {
-            console.log('✅ Order submitted successfully');
-        })
-        .catch(err => {
-            console.error('❌ Submission error:', err);
-        });
-
-    } catch (err) {
-        console.error('❌ Failed to submit order:', err);
+    // Basic runtime guard
+    if (!MAIN_WEB_APP_URL || MAIN_WEB_APP_URL.includes('/dev')) {
+      console.error('❌ Invalid Web App URL!');
+      alert('⚠️ Configuration Error: Please contact the store owner.');
+      return;
     }
+
+    const formData = new FormData();
+
+    // Core order fields (kept as-is, with safe fallbacks)
+    formData.append('orderId',        orderData.orderId        || '');
+    formData.append('orderDate',      orderData.orderDate      || '');
+    formData.append('customerName',   orderData.customerName   || '');
+    formData.append('email',          orderData.email          || '');
+    formData.append('phone',          orderData.phone          || '');
+    formData.append('address',        orderData.address        || '');
+    formData.append('city',           orderData.city           || '');
+
+    // Human-readable items string (legacy fallback on server)
+    formData.append('items',          orderData.items          || '');
+
+    // Numeric fields
+    formData.append('subtotal',       orderData.subtotal       ?? 0);
+    formData.append('deliveryFee',    orderData.deliveryFee    ?? 0);
+    formData.append('total',          orderData.total          ?? 0);
+
+    // Status & options
+    formData.append('paymentMethod',  orderData.paymentMethod  || '');
+    formData.append('paymentStatus',  orderData.paymentStatus  || 'Pending Payment');
+    formData.append('orderStatus',    orderData.orderStatus    || 'New Order');
+    formData.append('paymentRef',     orderData.paymentRef     || '');
+    formData.append('proofUrl',       orderData.proofUrl       || '');
+    formData.append('deliveryCompany',orderData.deliveryCompany|| '');
+    formData.append('deliveryOption', orderData.deliveryOption || 'standard');
+    formData.append('notes',          orderData.notes          || '');
+    formData.append('createdAt',      orderData.createdAt      || new Date().toISOString());
+    formData.append('updatedAt',      orderData.updatedAt      || new Date().toISOString());
+
+    // Target spreadsheet (must point to the file that has INVENTORY)
+    formData.append('spreadsheetId',  SPREADSHEET_ID);
+
+    // Preferred structured payload for stock deduction on the server
+    // ✅ This was the bug: itemsDetailed must be passed from processOrder()
+    formData.append('itemsJson',      JSON.stringify(itemsDetailed || []));
+
+    console.log('📦 Full order data:', orderData);
+    console.log('🧾 itemsDetailed to send:', itemsDetailed);
+
+    // You can keep no-cors if you don’t need the response,
+    // but removing it helps you see server feedback in dev.
+    fetch(MAIN_WEB_APP_URL, {
+      method: 'POST',
+      body: formData,
+      // mode: 'no-cors' // uncomment if you prefer opaque response
+    })
+      .then(async (res) => {
+        try {
+          const text = await res.text();
+          console.log('✅ Submit response text:', text);
+          // If your Apps Script returns JSON, you can parse it:
+          // const data = JSON.parse(text);
+          // console.log('✅ Submit response JSON:', data);
+        } catch (parseErr) {
+          console.warn('ℹ️ Response not JSON or parsing skipped:', parseErr);
+        }
+      })
+      .catch(err => {
+        console.error('❌ Submission error:', err);
+        showNotification('Order submission failed. Please try again.', 'error');
+      });
+
+  } catch (err) {
+    console.error('❌ Failed to submit order:', err);
+    showNotification('Unexpected error while submitting your order.', 'error');
+  }
 }
+
 function showOrderConfirmation(orderData, itemsDetailed) {
     const checkoutContainer = document.querySelector('.checkout-container');
     if (!checkoutContainer) return;
